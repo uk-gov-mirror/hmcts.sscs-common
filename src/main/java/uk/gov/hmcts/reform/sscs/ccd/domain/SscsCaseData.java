@@ -391,17 +391,17 @@ public class SscsCaseData  implements CaseData {
     }
 
     @JsonIgnore
-    public boolean isLanguagePreferenceWelsh() {
+    public boolean isLanguagePreferenceWelshAsBoolean() {
         return stringToBoolean(languagePreferenceWelsh);
     }
 
     @JsonIgnore
     public LanguagePreference getLanguagePreference() {
-        return isLanguagePreferenceWelsh() ? LanguagePreference.WELSH : LanguagePreference.ENGLISH;
+        return isLanguagePreferenceWelshAsBoolean() ? LanguagePreference.WELSH : LanguagePreference.ENGLISH;
     }
 
     @JsonIgnore
-    public boolean isTranslationWorkOutstanding() {
+    public boolean isTranslationWorkOutstandingAsBoolean() {
         return stringToBoolean(translationWorkOutstanding);
     }
 
