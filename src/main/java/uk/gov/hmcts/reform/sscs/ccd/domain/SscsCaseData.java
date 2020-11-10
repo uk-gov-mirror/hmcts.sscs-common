@@ -1,8 +1,9 @@
 package uk.gov.hmcts.reform.sscs.ccd.domain;
 
-import com.fasterxml.jackson.annotation.*;
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateSerializer;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -14,6 +15,9 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import javax.validation.Valid;
 import javax.validation.groups.ConvertGroup;
+import lombok.AccessLevel;
+import lombok.Data;
+import lombok.Getter;
 import org.apache.commons.lang3.StringUtils;
 import uk.gov.hmcts.reform.sscs.ccd.callback.DocumentType;
 import uk.gov.hmcts.reform.sscs.ccd.validation.documentlink.DocumentLinkMustBePdf;
@@ -21,9 +25,10 @@ import uk.gov.hmcts.reform.sscs.ccd.validation.groups.UniversalCreditValidationG
 import uk.gov.hmcts.reform.sscs.ccd.validation.localdate.LocalDateMustBeInFuture;
 import uk.gov.hmcts.reform.sscs.ccd.validation.localdate.LocalDateMustNotBeInFuture;
 
+@Data
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class SscsCaseData implements CaseData {
+public class SscsCaseData  implements CaseData {
 
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private String ccdCaseId;
@@ -39,6 +44,7 @@ public class SscsCaseData implements CaseData {
     private Evidence evidence;
     private List<DwpTimeExtension> dwpTimeExtension;
     private List<Event> events;
+    @Getter(AccessLevel.NONE)
     private Subscriptions subscriptions;
     private RegionalProcessingCenter regionalProcessingCenter;
     private List<Bundle> caseBundles;
@@ -304,524 +310,8 @@ public class SscsCaseData implements CaseData {
     private String test1;
     private String test2;
 
-    @JsonCreator
-    public SscsCaseData(@JsonProperty(value = "ccdCaseId", access = JsonProperty.Access.WRITE_ONLY) String ccdCaseId,
-                        @JsonProperty(value = "state") State state,
-                        @JsonProperty(value = "previousState") State previousState,
-                        @JsonProperty("caseReference") String caseReference,
-                        @JsonProperty("caseCreated") String caseCreated,
-                        @JsonProperty("infoRequests") InfoRequests infoRequests,
-                        @JsonProperty("region") String region,
-                        @JsonProperty("appeal") Appeal appeal,
-                        @JsonProperty("hearings") List<Hearing> hearings,
-                        @JsonProperty("evidence") Evidence evidence,
-                        @JsonProperty("dwpTimeExtension") List<DwpTimeExtension> dwpTimeExtension,
-                        @JsonProperty("events") List<Event> events,
-                        @JsonProperty("subscriptions") Subscriptions subscriptions,
-                        @JsonProperty("regionalProcessingCenter") RegionalProcessingCenter regionalProcessingCenter,
-                        @JsonProperty("caseBundles") List<Bundle> caseBundles,
-                        @JsonProperty("sscsDocument") List<SscsDocument> sscsDocument,
-                        @JsonProperty("draftSscsDocument") List<SscsDocument> draftSscsDocument,
-                        @JsonProperty("draftSscsFurtherEvidenceDocument") List<SscsFurtherEvidenceDoc> draftSscsFurtherEvidenceDocument,
-                        @JsonProperty("corDocument") List<CorDocument> corDocument,
-                        @JsonProperty("draftCorDocument") List<CorDocument> draftCorDocument,
-                        @JsonProperty("sscsInterlocDecisionDocument") SscsInterlocDecisionDocument sscsInterlocDecisionDocument,
-                        @JsonProperty("sscsInterlocDirectionDocument") SscsInterlocDirectionDocument sscsInterlocDirectionDocument,
-                        @JsonProperty("sscsStrikeOutDocument") SscsStrikeOutDocument sscsStrikeOutDocument,
-                        @JsonProperty("generatedNino") String generatedNino,
-                        @JsonProperty("generatedSurname") String generatedSurname,
-                        @JsonProperty("generatedEmail") String generatedEmail,
-                        @JsonProperty("generatedMobile") String generatedMobile,
-                        @JsonProperty("generatedDOB") String generatedDob,
-                        @JsonProperty("directionResponse") DirectionResponse directionResponse,
-                        @JsonProperty("evidencePresent") String evidencePresent,
-                        @JsonProperty("bulkScanCaseReference") String bulkScanCaseReference,
-                        @JsonProperty("decisionNotes") String decisionNotes,
-                        @JsonProperty("isCorDecision") String isCorDecision,
-                        @JsonProperty("relistingReason") String relistingReason,
-                        @JsonProperty("dateSentToDwp") String dateSentToDwp,
-                        @JsonProperty("interlocReviewState") String interlocReviewState,
-                        @JsonProperty("hmctsDwpState") String hmctsDwpState,
-                        @JsonProperty("dwpFurtherEvidenceStates") String dwpFurtherEvidenceStates,
-                        @JsonProperty("originalSender") DynamicList originalSender,
-                        @JsonProperty("furtherEvidenceAction") DynamicList furtherEvidenceAction,
-                        @JsonProperty("scannedDocuments") List<ScannedDocument> scannedDocuments,
-                        @JsonProperty("informationFromAppellant") String informationFromAppellant,
-                        @JsonProperty("outcome") String outcome,
-                        @JsonProperty("evidenceHandled") String evidenceHandled,
-                        @JsonProperty("assignedToJudge") String assignedToJudge,
-                        @JsonProperty("assignedToDisabilityMember") String assignedToDisabilityMember,
-                        @JsonProperty("assignedToMedicalMember") String assignedToMedicalMember,
-                        @JsonProperty("reissueFurtherEvidenceDocument") DynamicList reissueFurtherEvidenceDocument,
-                        @JsonProperty("resendToAppellant") String resendToAppellant,
-                        @JsonProperty("resendToRepresentative") String resendToRepresentative,
-                        @JsonProperty("resendToDwp") String resendToDwp,
-                        @JsonProperty("caseCode") String caseCode,
-                        @JsonProperty("benefitCode") String benefitCode,
-                        @JsonProperty("issueCode") String issueCode,
-                        @JsonProperty("dwpOriginatingOffice") DynamicList dwpOriginatingOffice,
-                        @JsonProperty("dwpPresentingOffice") DynamicList dwpPresentingOffice,
-                        @JsonProperty("dwpIsOfficerAttending") String dwpIsOfficerAttending,
-                        @JsonProperty("dwpUCB") String dwpUcb,
-                        @JsonProperty("dwpPHME") String dwpPhme,
-                        @JsonProperty("dwpComplexAppeal") String dwpComplexAppeal,
-                        @JsonProperty("dwpFurtherInfo") String dwpFurtherInfo,
-                        @JsonProperty("correspondence") List<Correspondence> correspondence,
-                        @JsonProperty("interlocReferralDate") String interlocReferralDate,
-                        @JsonProperty("interlocReferralReason") String interlocReferralReason,
-                        @JsonProperty("dwpRegionalCentre") String dwpRegionalCentre,
-                        @JsonProperty("generateNotice") String generateNotice,
-                        @JsonProperty("previewDocument") DocumentLink previewDocument,
-                        @JsonProperty("bodyContent") String bodyContent,
-                        @JsonProperty("signedBy") String signedBy,
-                        @JsonProperty("signedRole") String signedRole,
-                        @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
-                        @JsonSerialize(using = LocalDateSerializer.class)
-                        @JsonProperty("dateAdded") LocalDate dateAdded,
-                        @JsonProperty("historicSscsInterlocDirectionDocs") List<SscsInterlocDirectionDocuments> historicSscsInterlocDirectionDocs,
-                        @JsonProperty("dwpState") String dwpState,
-                        @JsonProperty("appealNotePad") NotePad appealNotePad,
-                        @JsonProperty("dwpStateFeNoAction") DynamicList dwpStateFeNoAction,
-                        @JsonProperty("createdInGapsFrom") String createdInGapsFrom,
-                        @JsonProperty("dateCaseSentToGaps") String dateCaseSentToGaps,
-                        @JsonProperty("associatedCase") List<CaseLink> associatedCase,
-                        @JsonProperty("dwpAT38Document") DwpResponseDocument dwpAT38Document,
-                        @JsonProperty("dwpEvidenceBundleDocument") DwpResponseDocument dwpEvidenceBundleDocument,
-                        @JsonProperty("dwpResponseDocument") DwpResponseDocument dwpResponseDocument,
-                        @JsonProperty("dwpSupplementaryResponseDoc") DwpResponseDocument dwpSupplementaryResponseDoc,
-                        @JsonProperty("dwpOtherDoc") DwpResponseDocument dwpOtherDoc,
-                        @JsonProperty("dwpLT203") DwpLT203 dwpLT203,
-                        @JsonProperty("dwpLapseLetter") DwpLapseLetter dwpLapseLetter,
-                        @JsonProperty("dwpResponseDate") String dwpResponseDate,
-                        @JsonProperty("linkedCasesBoolean") String linkedCasesBoolean,
-                        @JsonProperty("decisionType") String decisionType,
-                        @JsonProperty("selectWhoReviewsCase") DynamicList selectWhoReviewsCase,
-                        @JsonProperty("directionType") DirectionType directionType,
-                        @JsonProperty("directionTypeDl") DynamicList directionTypeDl,
-                        @JsonProperty("extensionNextEvent") ExtensionNextEvent extensionNextEvent,
-                        @JsonProperty("extensionNextEventDl") DynamicList extensionNextEventDl,
-                        @JsonProperty("tl1Form") DwpResponseDocument tl1Form,
-                        @JsonProperty("isInterlocRequired") String isInterlocRequired,
-                        @JsonProperty("panel") Panel panel,
-                        @JsonProperty("evidenceReceivedCF") EvidenceReceived evidenceReceived,
-                        @JsonProperty("urgentCase") String urgentCase,
-                        @JsonProperty("urgentHearingRegistered") String urgentHearingRegistered,
-                        @JsonProperty("urgentHearingOutcome") String urgentHearingOutcome,
-                        @JsonProperty("documentSentToDwp") String documentSentToDwp,
-                        @JsonProperty("directionDueDate") String directionDueDate,
-                        @JsonProperty("reservedToJudge") String reservedToJudge,
-                        @JsonProperty("linkedCase") List<CaseLink> linkedCase,
-                        @JsonProperty("isWaiverNeeded") String isWaiverNeeded,
-                        @JsonProperty("waiverDeclaration") List<String> waiverDeclaration,
-                        @JsonProperty("waiverReason") List<String> waiverReason,
-                        @JsonProperty("waiverReasonOther") String waiverReasonOther,
-                        @JsonProperty("clerkDelegatedAuthority") List<String> clerkDelegatedAuthority,
-                        @JsonProperty("clerkAppealSatisfactionText") List<String> clerkAppealSatisfactionText,
-                        @JsonProperty("pipWriteFinalDecisionDailyLivingActivitiesQuestion") List<String> pipWriteFinalDecisionDailyLivingActivitiesQuestion,
-                        @JsonProperty("pipWriteFinalDecisionMobilityActivitiesQuestion") List<String> pipWriteFinalDecisionMobilityActivitiesQuestion,
-                        @JsonProperty("clerkConfirmationOfMRN") String clerkConfirmationOfMrn,
-                        @JsonProperty("clerkOtherReason") String clerkOtherReason,
-                        @JsonProperty("clerkConfirmationOther") String clerkConfirmationOther,
-                        @JsonProperty("responseRequired") String responseRequired,
-                        @JsonProperty("timeExtensionRequested") String timeExtensionRequested,
-                        @JsonProperty("bundleConfiguration") String bundleConfiguration,
-                        @JsonProperty("pcqId") String pcqId,
-                        @JsonProperty("writeFinalDecisionIsDescriptorFlow") String writeFinalDecisionIsDescriptorFlow,
-                        @JsonProperty("writeFinalDecisionGenerateNotice") String writeFinalDecisionGenerateNotice,
-                        @JsonProperty("writeFinalDecisionAllowedOrRefused") String writeFinalDecisionAllowedOrRefused,
-                        @JsonProperty("writeFinalDecisionTypeOfHearing") String writeFinalDecisionTypeOfHearing,
-                        @JsonProperty("writeFinalDecisionPresentingOfficerAttendedQuestion") String writeFinalDecisionPresentingOfficerAttendedQuestion,
-                        @JsonProperty("writeFinalDecisionAppellantAttendedQuestion") String writeFinalDecisionAppellantAttendedQuestion,
-                        @JsonProperty("pipWriteFinalDecisionDailyLivingQuestion") String pipWriteFinalDecisionDailyLivingQuestion,
-                        @JsonProperty("pipWriteFinalDecisionComparedToDWPDailyLivingQuestion") String pipWriteFinalDecisionComparedToDwpDailyLivingQuestion,
-                        @JsonProperty("pipWriteFinalDecisionMobilityQuestion") String pipWriteFinalDecisionMobilityQuestion,
-                        @JsonProperty("pipWriteFinalDecisionComparedToDWPMobilityQuestion") String pipWriteFinalDecisionComparedToDwpMobilityQuestion,
-                        @JsonProperty("writeFinalDecisionStartDate") String writeFinalDecisionStartDate,
-                        @JsonProperty("writeFinalDecisionEndDateType") String writeFinalDecisionEndDateType,
-                        @JsonProperty("writeFinalDecisionEndDate") String writeFinalDecisionEndDate,
-                        @JsonProperty("writeFinalDecisionDisabilityQualifiedPanelMemberName") String writeFinalDecisionDisabilityQualifiedPanelMemberName,
-                        @JsonProperty("writeFinalDecisionMedicallyQualifiedPanelMemberName") String writeFinalDecisionMedicallyQualifiedPanelMemberName,
-                        @JsonProperty("writeFinalDecisionOtherPanelMemberName") String writeFinalDecisionOtherPanelMemberName,
-                        @JsonProperty("writeFinalDecisionDateOfDecision") String writeFinalDecisionDateOfDecision,
-                        @JsonProperty("writeFinalDecisionDetailsOfDecision") String writeFinalDecisionDetailsOfDecision,
-                        @JsonProperty("writeFinalDecisionReasons") List<CollectionItem<String>> writeFinalDecisionReasons,
-                        @JsonProperty("pipWriteFinalDecisionPreparingFoodQuestion") String pipWriteFinalDecisionPreparingFoodQuestion,
-                        @JsonProperty("pipWriteFinalDecisionTakingNutritionQuestion") String pipWriteFinalDecisionTakingNutritionQuestion,
-                        @JsonProperty("pipWriteFinalDecisionManagingTherapyQuestion") String pipWriteFinalDecisionManagingTherapyQuestion,
-                        @JsonProperty("pipWriteFinalDecisionWashAndBatheQuestion") String pipWriteFinalDecisionWashAndBatheQuestion,
-                        @JsonProperty("pipWriteFinalDecisionManagingToiletNeedsQuestion") String pipWriteFinalDecisionManagingToiletNeedsQuestion,
-                        @JsonProperty("pipWriteFinalDecisionDressingAndUndressingQuestion") String pipWriteFinalDecisionDressingAndUndressingQuestion,
-                        @JsonProperty("pipWriteFinalDecisionCommunicatingQuestion") String pipWriteFinalDecisionCommunicatingQuestion,
-                        @JsonProperty("pipWriteFinalDecisionReadingUnderstandingQuestion") String pipWriteFinalDecisionReadingUnderstandingQuestion,
-                        @JsonProperty("pipWriteFinalDecisionEngagingWithOthersQuestion") String pipWriteFinalDecisionEngagingWithOthersQuestion,
-                        @JsonProperty("pipWriteFinalDecisionBudgetingDecisionsQuestion") String pipWriteFinalDecisionBudgetingDecisionsQuestion,
-                        @JsonProperty("pipWriteFinalDecisionPlanningAndFollowingQuestion") String pipWriteFinalDecisionPlanningAndFollowingQuestion,
-                        @JsonProperty("pipWriteFinalDecisionMovingAroundQuestion") String pipWriteFinalDecisionMovingAroundQuestion,
-                        @JsonProperty("writeFinalDecisionPageSectionReference") String writeFinalDecisionPageSectionReference,
-                        @JsonProperty("writeFinalDecisionAnythingElse") String writeFinalDecisionAnythingElse,
-                        @JsonProperty("writeFinalDecisionPreviewDocument") DocumentLink writeFinalDecisionPreviewDocument,
-                        @JsonProperty("writeFinalDecisionGeneratedDate") String writeFinalDecisionGeneratedDate,
-                        @JsonProperty("adjournCaseGenerateNotice") String adjournCaseGenerateNotice,
-                        @JsonProperty("adjournCaseTypeOfHearing") String adjournCaseTypeOfHearing,
-                        @JsonProperty("adjournCaseCanCaseBeListedRightAway") String adjournCaseCanCaseBeListedRightAway,
-                        @JsonProperty("adjournCaseAreDirectionsBeingMadeToParties") String adjournCaseAreDirectionsBeingMadeToParties,
-                        @JsonProperty("adjournCaseDirectionsDueDateDaysOffset") String adjournCaseDirectionsDueDateDaysOffset,
-                        @JsonProperty("adjournCaseDirectionsDueDate") String adjournCaseDirectionsDueDate,
-                        @JsonProperty("adjournCaseTypeOfNextHearing") String adjournCaseTypeOfNextHearing,
-                        @JsonProperty("adjournCaseNextHearingVenue") String adjournCaseNextHearingVenue,
-                        @JsonProperty("adjournCaseNextHearingVenueSelected") DynamicList adjournCaseNextHearingVenueSelected,
-                        @JsonProperty("adjournCasePanelMembersExcluded") String adjournCasePanelMembersExcluded,
-                        @JsonProperty("adjournCaseDisabilityQualifiedPanelMemberName") String adjournCaseDisabilityQualifiedPanelMemberName,
-                        @JsonProperty("adjournCaseMedicallyQualifiedPanelMemberName") String adjournCaseMedicallyQualifiedPanelMemberName,
-                        @JsonProperty("adjournCaseOtherPanelMemberName") String adjournCaseOtherPanelMemberName,
-                        @JsonProperty("adjournCaseNextHearingListingDurationType") String adjournCaseNextHearingListingDurationType,
-                        @JsonProperty("adjournCaseNextHearingListingDuration") String adjournCaseNextHearingListingDuration,
-                        @JsonProperty("adjournCaseNextHearingListingDurationUnits") String adjournCaseNextHearingListingDurationUnits,
-                        @JsonProperty("adjournCaseInterpreterRequired") String adjournCaseInterpreterRequired,
-                        @JsonProperty("adjournCaseInterpreterLanguage") String adjournCaseInterpreterLanguage,
-                        @JsonProperty("adjournCaseNextHearingDateType") String adjournCaseNextHearingDateType,
-                        @JsonProperty("adjournCaseNextHearingDateOrPeriod") String adjournCaseNextHearingDateOrPeriod,
-                        @JsonProperty("adjournCaseNextHearingDateOrTime") String adjournCaseNextHearingDateOrTime,
-                        @JsonProperty("adjournCaseNextHearingFirstAvailableDateAfterDate") String adjournCaseNextHearingFirstAvailableDateAfterDate,
-                        @JsonProperty("adjournCaseNextHearingFirstAvailableDateAfterPeriod") String adjournCaseNextHearingFirstAvailableDateAfterPeriod,
-                        @JsonProperty("adjournCaseTime") AdjournCaseTime adjournCaseTime,
-                        @JsonProperty("adjournCaseReasons") List<CollectionItem<String>> adjournCaseReasons,
-                        @JsonProperty("adjournCaseAdditionalDirections") List<CollectionItem<String>> adjournCaseAdditionalDirections,
-                        @JsonProperty("adjournCasePreviewDocument") DocumentLink adjournCasePreviewDocument,
-                        @JsonProperty("adjournCaseGeneratedDate") String adjournCaseGeneratedDate,
-                        @JsonProperty("notListableProvideReasons") String notListableProvideReasons,
-                        @JsonProperty("notListableDueDate") String notListableDueDate,
-                        @JsonProperty("updateNotListableDirectionsFulfilled") String updateNotListableDirectionsFulfilled,
-                        @JsonProperty("updateNotListableInterlocReview") String updateNotListableInterlocReview,
-                        @JsonProperty("updateNotListableWhoReviewsCase") String updateNotListableWhoReviewsCase,
-                        @JsonProperty("updateNotListableSetNewDueDate") String updateNotListableSetNewDueDate,
-                        @JsonProperty("updateNotListableDueDate") String updateNotListableDueDate,
-                        @JsonProperty("updateNotListableWhereShouldCaseMoveTo") String updateNotListableWhereShouldCaseMoveTo,
-                        @JsonProperty("languagePreferenceWelsh") String languagePreferenceWelsh,
-                        @JsonProperty("elementsDisputedList") List<String> elementsDisputedList,
-                        @JsonProperty("elementsDisputedGeneral") List<ElementDisputed> elementsDisputedGeneral,
-                        @JsonProperty("elementsDisputedSanctions") List<ElementDisputed> elementsDisputedSanctions,
-                        @JsonProperty("elementsDisputedOverpayment") List<ElementDisputed> elementsDisputedOverpayment,
-                        @JsonProperty("elementsDisputedHousing") List<ElementDisputed> elementsDisputedHousing,
-                        @JsonProperty("elementsDisputedChildCare") List<ElementDisputed> elementsDisputedChildCare,
-                        @JsonProperty("elementsDisputedCare") List<ElementDisputed> elementsDisputedCare,
-                        @JsonProperty("elementsDisputedChildElement") List<ElementDisputed> elementsDisputedChildElement,
-                        @JsonProperty("elementsDisputedChildDisabled") List<ElementDisputed> elementsDisputedChildDisabled,
-                        @JsonProperty("elementsDisputedIsDecisionDisputedByOthers") String elementsDisputedIsDecisionDisputedByOthers,
-                        @JsonProperty("elementsDisputedLinkedAppealRef") String elementsDisputedLinkedAppealRef,
-                        @JsonProperty("jointParty") String jointParty,
-                        @JsonProperty("jointPartyName") JointPartyName jointPartyName,
-                        @JsonProperty("jointPartyIdentity") Identity jointPartyIdentity,
-                        @JsonProperty("jointPartyAddressSameAsAppellant") String jointPartyAddressSameAsAppellant,
-                        @JsonProperty("jointPartyAddress") Address jointPartyAddress,
-                        @JsonProperty("translationWorkOutstanding") String translationWorkOutstanding,
-                        @JsonProperty("sscsWelshDocuments") List<SscsWelshDocument> sscsWelshDocuments,
-                        @JsonProperty("sscsWelshPreviewDocuments") List<SscsWelshDocument> sscsWelshPreviewDocuments,
-                        @JsonProperty("sscsWelshPreviewNextEvent") String sscsWelshPreviewNextEvent,
-                        @JsonProperty("originalDocuments") DynamicList originalDocuments,
-                        @JsonProperty("originalNoticeDocuments") DynamicList originalNoticeDocuments,
-                        @JsonProperty("documentTypes") DynamicList documentTypes,
-                        @JsonProperty("welshBodyContent") String welshBodyContent,
-                        @JsonProperty("englishBodyContent") String englishBodyContent,
-                        @JsonProperty("isScottishCase") String isScottishCase,
-                        @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
-                            @JsonSerialize(using = LocalDateSerializer.class)
-                            @JsonProperty("reinstatementRegistered") LocalDate reinstatementRegistered,
-                        @JsonProperty("reinstatementOutcome") RequestOutcome reinstatementOutcome,
-                        @JsonProperty("welshInterlocNextReviewState") String welshInterlocNextReviewState,
-                        @JsonProperty("confidentialityRequestOutcomeAppellant") DatedRequestOutcome confidentialityRequestOutcomeAppellant,
-                        @JsonProperty("confidentialityRequestOutcomeJointParty") DatedRequestOutcome confidentialityRequestOutcomeJointParty,
-                        @JsonProperty("confidentialityRequestAppellantGrantedOrRefused") String confidentialityRequestAppellantGrantedOrRefused,
-                        @JsonProperty("confidentialityRequestJointPartyGrantedOrRefused") String confidentialityRequestJointPartyGrantedOrRefused,
-                        @JsonProperty(value = "formType") FormType formType,
-                        @JsonProperty("isProgressingViaGaps") String isProgressingViaGaps,
-                        @JsonProperty("wcaAppeal") String wcaAppeal,
-                        @JsonProperty("supportGroupOnlyAppeal") String supportGroupOnlyAppeal,
-                        @JsonProperty("esaWriteFinalDecisionPhysicalDisabilitiesQuestion") List<String> esaWriteFinalDecisionPhysicalDisabilitiesQuestion,
-                        @JsonProperty("esaWriteFinalDecisionMentalAssessmentQuestion") List<String> esaWriteFinalDecisionMentalAssessmentQuestion,
-                        @JsonProperty("esaWriteFinalDecisionMobilisingUnaidedQuestion") String esaWriteFinalDecisionMobilisingUnaidedQuestion,
-                        @JsonProperty("esaWriteFinalDecisionStandingAndSittingQuestion") String esaWriteFinalDecisionStandingAndSittingQuestion,
-                        @JsonProperty("esaWriteFinalDecisionReachingQuestion") String esaWriteFinalDecisionReachingQuestion,
-                        @JsonProperty("esaWriteFinalDecisionPickingUpQuestion") String esaWriteFinalDecisionPickingUpQuestion,
-                        @JsonProperty("esaWriteFinalDecisionManualDexterityQuestion") String esaWriteFinalDecisionManualDexterityQuestion,
-                        @JsonProperty("esaWriteFinalDecisionMakingSelfUnderstoodQuestion") String esaWriteFinalDecisionMakingSelfUnderstoodQuestion,
-                        @JsonProperty("esaWriteFinalDecisionCommunicationQuestion") String esaWriteFinalDecisionCommunicationQuestion,
-                        @JsonProperty("esaWriteFinalDecisionNavigationQuestion") String esaWriteFinalDecisionNavigationQuestion,
-                        @JsonProperty("esaWriteFinalDecisionLossOfControlQuestion") String esaWriteFinalDecisionLossOfControlQuestion,
-                        @JsonProperty("esaWriteFinalDecisionConsciousnessQuestion") String esaWriteFinalDecisionConsciousnessQuestion,
-                        @JsonProperty("esaWriteFinalDecisionLearningTasksQuestion") String esaWriteFinalDecisionLearningTasksQuestion,
-                        @JsonProperty("esaWriteFinalDecisionAwarenessOfHazardsQuestion") String esaWriteFinalDecisionAwarenessOfHazardsQuestion,
-                        @JsonProperty("esaWriteFinalDecisionPersonalActionQuestion") String esaWriteFinalDecisionPersonalActionQuestion,
-                        @JsonProperty("esaWriteFinalDecisionCopingWithChangeQuestion") String esaWriteFinalDecisionCopingWithChangeQuestion,
-                        @JsonProperty("esaWriteFinalDecisionGettingAboutQuestion") String esaWriteFinalDecisionGettingAboutQuestion,
-                        @JsonProperty("esaWriteFinalDecisionSocialEngagementQuestion") String esaWriteFinalDecisionSocialEngagementQuestion,
-                        @JsonProperty("esaWriteFinalDecisionAppropriatenessOfBehaviourQuestion") String esaWriteFinalDecisionAppropriatenessOfBehaviourQuestion,
-                        @JsonProperty("doesRegulation29Apply") YesNo doesRegulation29Apply,
-                        @JsonProperty("showRegulation29Page") YesNo showRegulation29Page,
-                        @JsonProperty("showSchedule3ActivitiesPage") YesNo showSchedule3ActivitiesPage,
-                        @JsonProperty("esaWriteFinalDecisionSchedule3ActivitiesApply") String esaWriteFinalDecisionSchedule3ActivitiesApply,
-                        @JsonProperty("esaWriteFinalDecisionSchedule3ActivitiesQuestion") List<String> esaWriteFinalDecisionSchedule3ActivitiesQuestion,
-                        @JsonProperty("doesRegulation35Apply") YesNo doesRegulation35Apply,
-                        @JsonProperty("showFinalDecisionNoticeSummaryOfOutcomePage") YesNo showFinalDecisionNoticeSummaryOfOutcomePage,
-                        @JsonProperty("test1") String test1,
-                        @JsonProperty("test2") String test2) {
-
-        this.ccdCaseId = ccdCaseId;
-        this.state = state;
-        this.previousState = previousState;
-        this.caseReference = caseReference;
-        this.caseCreated = caseCreated;
-        this.infoRequests = infoRequests;
-        this.region = region;
-        this.appeal = appeal;
-        this.hearings = hearings;
-        this.evidence = evidence;
-        this.dwpTimeExtension = dwpTimeExtension;
-        this.events = events;
-        this.subscriptions = subscriptions;
-        this.regionalProcessingCenter = regionalProcessingCenter;
-        this.caseBundles = caseBundles;
-        this.sscsDocument = sscsDocument;
-        this.draftSscsDocument = draftSscsDocument;
-        this.draftSscsFurtherEvidenceDocument = draftSscsFurtherEvidenceDocument;
-        this.corDocument = corDocument;
-        this.draftCorDocument = draftCorDocument;
-        this.generatedNino = generatedNino;
-        this.generatedSurname = generatedSurname;
-        this.generatedEmail = generatedEmail;
-        this.generatedMobile = generatedMobile;
-        this.generatedDob = generatedDob;
-        this.directionResponse = directionResponse;
-        this.evidencePresent = evidencePresent;
-        this.bulkScanCaseReference = bulkScanCaseReference;
-        this.decisionNotes = decisionNotes;
-        this.isCorDecision = isCorDecision;
-        this.relistingReason = relistingReason;
-        this.dateSentToDwp = dateSentToDwp;
-        this.interlocReviewState = interlocReviewState;
-        this.hmctsDwpState = hmctsDwpState;
-        this.dwpFurtherEvidenceStates = dwpFurtherEvidenceStates;
-        this.originalSender = originalSender;
-        this.furtherEvidenceAction = furtherEvidenceAction;
-        this.scannedDocuments = scannedDocuments;
-        this.outcome = outcome;
-        this.sscsInterlocDirectionDocument = sscsInterlocDirectionDocument;
-        this.sscsInterlocDecisionDocument = sscsInterlocDecisionDocument;
-        this.sscsStrikeOutDocument = sscsStrikeOutDocument;
-        this.informationFromAppellant = informationFromAppellant;
-        this.evidenceHandled = evidenceHandled;
-        this.assignedToJudge = assignedToJudge;
-        this.assignedToDisabilityMember = assignedToDisabilityMember;
-        this.assignedToMedicalMember = assignedToMedicalMember;
-        this.reissueFurtherEvidenceDocument = reissueFurtherEvidenceDocument;
-        this.resendToAppellant = resendToAppellant;
-        this.resendToRepresentative = resendToRepresentative;
-        this.resendToDwp = resendToDwp;
-        this.caseCode = caseCode;
-        this.benefitCode = benefitCode;
-        this.issueCode = issueCode;
-        this.dwpOriginatingOffice = dwpOriginatingOffice;
-        this.dwpPresentingOffice = dwpPresentingOffice;
-        this.dwpIsOfficerAttending = dwpIsOfficerAttending;
-        this.dwpUcb = dwpUcb;
-        this.dwpPhme = dwpPhme;
-        this.dwpComplexAppeal = dwpComplexAppeal;
-        this.dwpFurtherInfo = dwpFurtherInfo;
-        this.correspondence = correspondence;
-        this.interlocReferralDate = interlocReferralDate;
-        this.interlocReferralReason = interlocReferralReason;
-        this.dwpRegionalCentre = dwpRegionalCentre;
-        this.generateNotice = generateNotice;
-        this.previewDocument = previewDocument;
-        this.bodyContent = bodyContent;
-        this.signedBy = signedBy;
-        this.signedRole = signedRole;
-        this.dateAdded = dateAdded;
-        this.historicSscsInterlocDirectionDocs = historicSscsInterlocDirectionDocs;
-        this.dwpState = dwpState;
-        this.appealNotePad = appealNotePad;
-        this.dwpStateFeNoAction = dwpStateFeNoAction;
-        this.createdInGapsFrom = createdInGapsFrom;
-        this.dateCaseSentToGaps = dateCaseSentToGaps;
-        this.associatedCase = associatedCase;
-        this.dwpAT38Document = dwpAT38Document;
-        this.dwpEvidenceBundleDocument = dwpEvidenceBundleDocument;
-        this.dwpResponseDocument = dwpResponseDocument;
-        this.dwpSupplementaryResponseDoc = dwpSupplementaryResponseDoc;
-        this.dwpOtherDoc = dwpOtherDoc;
-        this.dwpLT203 = dwpLT203;
-        this.dwpLapseLetter = dwpLapseLetter;
-        this.dwpResponseDate = dwpResponseDate;
-        this.linkedCasesBoolean = linkedCasesBoolean;
-        this.decisionType = decisionType;
-        this.selectWhoReviewsCase = selectWhoReviewsCase;
-        this.directionType = directionType;
-        this.directionTypeDl = directionTypeDl;
-        this.extensionNextEvent = extensionNextEvent;
-        this.extensionNextEventDl = extensionNextEventDl;
-        this.tl1Form = tl1Form;
-        this.isInterlocRequired = isInterlocRequired;
-        this.panel = panel;
-        this.evidenceReceived = evidenceReceived;
-        this.urgentCase = urgentCase;
-        this.urgentHearingRegistered = urgentHearingRegistered;
-        this.urgentHearingOutcome = urgentHearingOutcome;
-        this.documentSentToDwp = documentSentToDwp;
-        this.directionDueDate = directionDueDate;
-        this.reservedToJudge = reservedToJudge;
-        this.linkedCase = linkedCase;
-        this.isWaiverNeeded = isWaiverNeeded;
-        this.waiverDeclaration = waiverDeclaration;
-        this.waiverReason = waiverReason;
-        this.waiverReasonOther = waiverReasonOther;
-        this.clerkDelegatedAuthority = clerkDelegatedAuthority;
-        this.clerkAppealSatisfactionText = clerkAppealSatisfactionText;
-        this.clerkConfirmationOfMrn = clerkConfirmationOfMrn;
-        this.clerkOtherReason = clerkOtherReason;
-        this.clerkConfirmationOther = clerkConfirmationOther;
-        this.responseRequired = responseRequired;
-        this.timeExtensionRequested = timeExtensionRequested;
-        this.bundleConfiguration = bundleConfiguration;
-        this.pcqId = pcqId;
-        this.writeFinalDecisionIsDescriptorFlow = writeFinalDecisionIsDescriptorFlow;
-        this.writeFinalDecisionGenerateNotice = writeFinalDecisionGenerateNotice;
-        this.writeFinalDecisionAllowedOrRefused = writeFinalDecisionAllowedOrRefused;
-        this.writeFinalDecisionTypeOfHearing = writeFinalDecisionTypeOfHearing;
-        this.writeFinalDecisionPresentingOfficerAttendedQuestion = writeFinalDecisionPresentingOfficerAttendedQuestion;
-        this.writeFinalDecisionAppellantAttendedQuestion = writeFinalDecisionAppellantAttendedQuestion;
-        this.pipWriteFinalDecisionDailyLivingQuestion = pipWriteFinalDecisionDailyLivingQuestion;
-        this.pipWriteFinalDecisionComparedToDwpDailyLivingQuestion = pipWriteFinalDecisionComparedToDwpDailyLivingQuestion;
-        this.pipWriteFinalDecisionMobilityQuestion = pipWriteFinalDecisionMobilityQuestion;
-        this.pipWriteFinalDecisionComparedToDwpMobilityQuestion = pipWriteFinalDecisionComparedToDwpMobilityQuestion;
-        this.writeFinalDecisionStartDate = writeFinalDecisionStartDate;
-        this.writeFinalDecisionEndDateType = writeFinalDecisionEndDateType;
-        this.writeFinalDecisionEndDate = writeFinalDecisionEndDate;
-        this.writeFinalDecisionDisabilityQualifiedPanelMemberName = writeFinalDecisionDisabilityQualifiedPanelMemberName;
-        this.writeFinalDecisionMedicallyQualifiedPanelMemberName = writeFinalDecisionMedicallyQualifiedPanelMemberName;
-        this.writeFinalDecisionOtherPanelMemberName = writeFinalDecisionOtherPanelMemberName;
-        this.writeFinalDecisionDateOfDecision = writeFinalDecisionDateOfDecision;
-        this.writeFinalDecisionDetailsOfDecision = writeFinalDecisionDetailsOfDecision;
-        this.writeFinalDecisionReasons = writeFinalDecisionReasons;
-        this.pipWriteFinalDecisionDailyLivingActivitiesQuestion = pipWriteFinalDecisionDailyLivingActivitiesQuestion;
-        this.pipWriteFinalDecisionMobilityActivitiesQuestion = pipWriteFinalDecisionMobilityActivitiesQuestion;
-        this.pipWriteFinalDecisionPreparingFoodQuestion = pipWriteFinalDecisionPreparingFoodQuestion;
-        this.pipWriteFinalDecisionTakingNutritionQuestion = pipWriteFinalDecisionTakingNutritionQuestion;
-        this.pipWriteFinalDecisionManagingTherapyQuestion = pipWriteFinalDecisionManagingTherapyQuestion;
-        this.pipWriteFinalDecisionWashAndBatheQuestion = pipWriteFinalDecisionWashAndBatheQuestion;
-        this.pipWriteFinalDecisionManagingToiletNeedsQuestion = pipWriteFinalDecisionManagingToiletNeedsQuestion;
-        this.pipWriteFinalDecisionDressingAndUndressingQuestion = pipWriteFinalDecisionDressingAndUndressingQuestion;
-        this.pipWriteFinalDecisionCommunicatingQuestion = pipWriteFinalDecisionCommunicatingQuestion;
-        this.pipWriteFinalDecisionReadingUnderstandingQuestion = pipWriteFinalDecisionReadingUnderstandingQuestion;
-        this.pipWriteFinalDecisionEngagingWithOthersQuestion = pipWriteFinalDecisionEngagingWithOthersQuestion;
-        this.pipWriteFinalDecisionBudgetingDecisionsQuestion = pipWriteFinalDecisionBudgetingDecisionsQuestion;
-        this.pipWriteFinalDecisionPlanningAndFollowingQuestion = pipWriteFinalDecisionPlanningAndFollowingQuestion;
-        this.pipWriteFinalDecisionMovingAroundQuestion = pipWriteFinalDecisionMovingAroundQuestion;
-        this.writeFinalDecisionPageSectionReference = writeFinalDecisionPageSectionReference;
-        this.writeFinalDecisionAnythingElse = writeFinalDecisionAnythingElse;
-        this.writeFinalDecisionPreviewDocument = writeFinalDecisionPreviewDocument;
-        this.writeFinalDecisionGeneratedDate = writeFinalDecisionGeneratedDate;
-        this.adjournCaseGenerateNotice = adjournCaseGenerateNotice;
-        this.adjournCaseTypeOfHearing = adjournCaseTypeOfHearing;
-        this.adjournCaseCanCaseBeListedRightAway = adjournCaseCanCaseBeListedRightAway;
-        this.adjournCaseAreDirectionsBeingMadeToParties = adjournCaseAreDirectionsBeingMadeToParties;
-        this.adjournCaseDirectionsDueDateDaysOffset = adjournCaseDirectionsDueDateDaysOffset;
-        this.adjournCaseDirectionsDueDate = adjournCaseDirectionsDueDate;
-        this.adjournCaseTypeOfNextHearing = adjournCaseTypeOfNextHearing;
-        this.adjournCaseNextHearingVenue = adjournCaseNextHearingVenue;
-        this.adjournCaseNextHearingVenueSelected = adjournCaseNextHearingVenueSelected;
-        this.adjournCasePanelMembersExcluded = adjournCasePanelMembersExcluded;
-        this.adjournCaseDisabilityQualifiedPanelMemberName = adjournCaseDisabilityQualifiedPanelMemberName;
-        this.adjournCaseMedicallyQualifiedPanelMemberName = adjournCaseMedicallyQualifiedPanelMemberName;
-        this.adjournCaseOtherPanelMemberName = adjournCaseOtherPanelMemberName;
-        this.adjournCaseNextHearingListingDurationType = adjournCaseNextHearingListingDurationType;
-        this.adjournCaseNextHearingListingDuration = adjournCaseNextHearingListingDuration;
-        this.adjournCaseNextHearingListingDurationUnits = adjournCaseNextHearingListingDurationUnits;
-        this.adjournCaseInterpreterRequired = adjournCaseInterpreterRequired;
-        this.adjournCaseInterpreterLanguage = adjournCaseInterpreterLanguage;
-        this.adjournCaseNextHearingDateType = adjournCaseNextHearingDateType;
-        this.adjournCaseNextHearingDateOrPeriod = adjournCaseNextHearingDateOrPeriod;
-        this.adjournCaseNextHearingDateOrTime = adjournCaseNextHearingDateOrTime;
-        this.adjournCaseNextHearingFirstAvailableDateAfterDate = adjournCaseNextHearingFirstAvailableDateAfterDate;
-        this.adjournCaseNextHearingFirstAvailableDateAfterPeriod = adjournCaseNextHearingFirstAvailableDateAfterPeriod;
-        this.adjournCaseTime = adjournCaseTime;
-        this.adjournCaseReasons = adjournCaseReasons;
-        this.adjournCaseAdditionalDirections = adjournCaseAdditionalDirections;
-        this.adjournCasePreviewDocument = adjournCasePreviewDocument;
-        this.adjournCaseGeneratedDate = adjournCaseGeneratedDate;
-        this.notListableProvideReasons = notListableProvideReasons;
-        this.notListableDueDate = notListableDueDate;
-        this.updateNotListableDirectionsFulfilled = updateNotListableDirectionsFulfilled;
-        this.updateNotListableInterlocReview = updateNotListableInterlocReview;
-        this.updateNotListableWhoReviewsCase = updateNotListableWhoReviewsCase;
-        this.updateNotListableSetNewDueDate = updateNotListableSetNewDueDate;
-        this.updateNotListableDueDate = updateNotListableDueDate;
-        this.updateNotListableWhereShouldCaseMoveTo = updateNotListableWhereShouldCaseMoveTo;
-        this.languagePreferenceWelsh = languagePreferenceWelsh;
-        this.elementsDisputedList = elementsDisputedList;
-        this.elementsDisputedGeneral = elementsDisputedGeneral;
-        this.elementsDisputedSanctions = elementsDisputedSanctions;
-        this.elementsDisputedOverpayment = elementsDisputedOverpayment;
-        this.elementsDisputedHousing = elementsDisputedHousing;
-        this.elementsDisputedChildCare = elementsDisputedChildCare;
-        this.elementsDisputedCare = elementsDisputedCare;
-        this.elementsDisputedChildElement = elementsDisputedChildElement;
-        this.elementsDisputedChildDisabled = elementsDisputedChildDisabled;
-        this.elementsDisputedIsDecisionDisputedByOthers = elementsDisputedIsDecisionDisputedByOthers;
-        this.elementsDisputedLinkedAppealRef = elementsDisputedLinkedAppealRef;
-        this.jointParty = jointParty;
-        this.jointPartyName = jointPartyName;
-        this.jointPartyIdentity = jointPartyIdentity;
-        this.jointPartyAddressSameAsAppellant = jointPartyAddressSameAsAppellant;
-        this.jointPartyAddress = jointPartyAddress;
-        this.translationWorkOutstanding = translationWorkOutstanding;
-        this.sscsWelshDocuments = sscsWelshDocuments;
-        this.sscsWelshPreviewDocuments = sscsWelshPreviewDocuments;
-        this.sscsWelshPreviewNextEvent = sscsWelshPreviewNextEvent;
-        this.originalDocuments = originalDocuments;
-        this.originalNoticeDocuments = originalNoticeDocuments;
-        this.documentTypes = documentTypes;
-        this.welshBodyContent = welshBodyContent;
-        this.englishBodyContent = englishBodyContent;
-        this.isScottishCase = isScottishCase;
-        this.reinstatementRegistered = reinstatementRegistered;
-        this.reinstatementOutcome = reinstatementOutcome;
-        this.welshInterlocNextReviewState = welshInterlocNextReviewState;
-        this.confidentialityRequestOutcomeAppellant = confidentialityRequestOutcomeAppellant;
-        this.confidentialityRequestOutcomeJointParty = confidentialityRequestOutcomeJointParty;
-        this.confidentialityRequestAppellantGrantedOrRefused = confidentialityRequestAppellantGrantedOrRefused;
-        this.confidentialityRequestJointPartyGrantedOrRefused =  confidentialityRequestJointPartyGrantedOrRefused;
-        this.formType = formType;
-        this.isProgressingViaGaps =  isProgressingViaGaps;
-        this.wcaAppeal = wcaAppeal;
-        this.supportGroupOnlyAppeal = supportGroupOnlyAppeal;
-        this.esaWriteFinalDecisionPhysicalDisabilitiesQuestion = esaWriteFinalDecisionPhysicalDisabilitiesQuestion;
-        this.esaWriteFinalDecisionMentalAssessmentQuestion = esaWriteFinalDecisionMentalAssessmentQuestion;
-        this.esaWriteFinalDecisionMobilisingUnaidedQuestion = esaWriteFinalDecisionMobilisingUnaidedQuestion;
-        this.esaWriteFinalDecisionStandingAndSittingQuestion = esaWriteFinalDecisionStandingAndSittingQuestion;
-        this.esaWriteFinalDecisionReachingQuestion = esaWriteFinalDecisionReachingQuestion;
-        this.esaWriteFinalDecisionPickingUpQuestion = esaWriteFinalDecisionPickingUpQuestion;
-        this.esaWriteFinalDecisionManualDexterityQuestion = esaWriteFinalDecisionManualDexterityQuestion;
-        this.esaWriteFinalDecisionMakingSelfUnderstoodQuestion = esaWriteFinalDecisionMakingSelfUnderstoodQuestion;
-        this.esaWriteFinalDecisionCommunicationQuestion = esaWriteFinalDecisionCommunicationQuestion;
-        this.esaWriteFinalDecisionNavigationQuestion = esaWriteFinalDecisionNavigationQuestion;
-        this.esaWriteFinalDecisionLossOfControlQuestion = esaWriteFinalDecisionLossOfControlQuestion;
-        this.esaWriteFinalDecisionConsciousnessQuestion = esaWriteFinalDecisionConsciousnessQuestion;
-        this.esaWriteFinalDecisionLearningTasksQuestion = esaWriteFinalDecisionLearningTasksQuestion;
-        this.esaWriteFinalDecisionAwarenessOfHazardsQuestion = esaWriteFinalDecisionAwarenessOfHazardsQuestion;
-        this.esaWriteFinalDecisionPersonalActionQuestion = esaWriteFinalDecisionPersonalActionQuestion;
-        this.esaWriteFinalDecisionCopingWithChangeQuestion = esaWriteFinalDecisionCopingWithChangeQuestion;
-        this.esaWriteFinalDecisionGettingAboutQuestion = esaWriteFinalDecisionGettingAboutQuestion;
-        this.esaWriteFinalDecisionSocialEngagementQuestion = esaWriteFinalDecisionSocialEngagementQuestion;
-        this.esaWriteFinalDecisionAppropriatenessOfBehaviourQuestion = esaWriteFinalDecisionAppropriatenessOfBehaviourQuestion;
-        this.doesRegulation29Apply = doesRegulation29Apply;
-        this.showRegulation29Page = showRegulation29Page;
-        this.showSchedule3ActivitiesPage = showSchedule3ActivitiesPage;
-        this.esaWriteFinalDecisionSchedule3ActivitiesApply = esaWriteFinalDecisionSchedule3ActivitiesApply;
-        this.esaWriteFinalDecisionSchedule3ActivitiesQuestion = esaWriteFinalDecisionSchedule3ActivitiesQuestion;
-        this.doesRegulation35Apply = doesRegulation35Apply;
-        this.showFinalDecisionNoticeSummaryOfOutcomePage = showFinalDecisionNoticeSummaryOfOutcomePage;
-        this.test1 = test1;
-        this.test2 = test2;
+    public static SscsCaseData.SscsCaseDataBuilder builder() {
+        return new SscsCaseData.SscsCaseDataBuilder();
     }
 
     @JsonIgnore
@@ -952,7 +442,7 @@ public class SscsCaseData implements CaseData {
 
         if (getSscsDocument() != null && getSscsDocument().size() > 0) {
             Stream<SscsDocument> filteredStream = getSscsDocument().stream()
-                    .filter(f -> documentType.getValue().equals(f.getValue().getDocumentType()));
+                .filter(f -> documentType.getValue().equals(f.getValue().getDocumentType()));
 
             List<SscsDocument> filteredList = filteredStream.collect(Collectors.toList());
 
@@ -978,14 +468,15 @@ public class SscsCaseData implements CaseData {
     @JsonIgnore
     public Optional<SscsWelshDocument> getLatestWelshDocumentForDocumentType(DocumentType documentType) {
         return Optional.ofNullable(getSscsWelshDocuments()).map(Collection::stream).orElseGet(Stream::empty)
-                .filter(wd -> wd.getValue().getDocumentType().equals(documentType.getValue()))
-                .sorted()
-                .findFirst();
+            .filter(wd -> wd.getValue().getDocumentType().equals(documentType.getValue()))
+            .sorted()
+            .findFirst();
     }
 
     @JsonIgnore
     public void updateTranslationWorkOutstandingFlag() {
-        if (getSscsDocument().stream().noneMatch(sd -> Arrays.asList(SscsDocumentTranslationStatus.TRANSLATION_REQUESTED, SscsDocumentTranslationStatus.TRANSLATION_REQUIRED).contains(sd.getValue().getDocumentTranslationStatus()))) {
+        if (getSscsDocument().stream().noneMatch(
+            sd -> Arrays.asList(SscsDocumentTranslationStatus.TRANSLATION_REQUESTED, SscsDocumentTranslationStatus.TRANSLATION_REQUIRED).contains(sd.getValue().getDocumentTranslationStatus()))) {
             this.translationWorkOutstanding = "No";
         } else {
             this.translationWorkOutstanding = "Yes";
@@ -1012,2051 +503,111 @@ public class SscsCaseData implements CaseData {
         }
     }
 
-    public String getCcdCaseId() {
-        return ccdCaseId;
+    public SscsCaseData.SscsCaseDataBuilder toBuilder() {
+        return (new SscsCaseData.SscsCaseDataBuilder()).ccdCaseId(this.ccdCaseId).state(this.state).previousState(this.previousState).caseReference(this.caseReference).caseCreated(this.caseCreated)
+        .infoRequests(this.infoRequests).region(this.region).appeal(this.appeal).hearings(this.hearings).evidence(this.evidence).dwpTimeExtension(this.dwpTimeExtension).events(this.events)
+        .subscriptions(this.subscriptions).regionalProcessingCenter(this.regionalProcessingCenter).caseBundles(this.caseBundles).sscsDocument(this.sscsDocument)
+        .draftSscsDocument(this.draftSscsDocument).draftSscsFurtherEvidenceDocument(this.draftSscsFurtherEvidenceDocument).corDocument(this.corDocument).draftCorDocument(this.draftCorDocument)
+        .sscsInterlocDecisionDocument(this.sscsInterlocDecisionDocument).sscsInterlocDirectionDocument(this.sscsInterlocDirectionDocument).sscsStrikeOutDocument(this.sscsStrikeOutDocument)
+        .generatedNino(this.generatedNino).generatedSurname(this.generatedSurname).generatedEmail(this.generatedEmail).generatedMobile(this.generatedMobile).generatedDob(this.generatedDob)
+        .directionResponse(this.directionResponse).evidencePresent(this.evidencePresent).bulkScanCaseReference(this.bulkScanCaseReference).decisionNotes(this.decisionNotes)
+        .isCorDecision(this.isCorDecision).relistingReason(this.relistingReason).dateSentToDwp(this.dateSentToDwp).interlocReviewState(this.interlocReviewState).hmctsDwpState(this.hmctsDwpState)
+        .dwpFurtherEvidenceStates(this.dwpFurtherEvidenceStates).originalSender(this.originalSender).furtherEvidenceAction(this.furtherEvidenceAction).scannedDocuments(this.scannedDocuments)
+        .informationFromAppellant(this.informationFromAppellant).outcome(this.outcome).evidenceHandled(this.evidenceHandled).assignedToJudge(this.assignedToJudge)
+        .assignedToDisabilityMember(this.assignedToDisabilityMember).assignedToMedicalMember(this.assignedToMedicalMember).reissueFurtherEvidenceDocument(this.reissueFurtherEvidenceDocument)
+        .resendToAppellant(this.resendToAppellant).resendToRepresentative(this.resendToRepresentative).resendToDwp(this.resendToDwp).caseCode(this.caseCode).benefitCode(this.benefitCode)
+        .issueCode(this.issueCode).dwpOriginatingOffice(this.dwpOriginatingOffice).dwpPresentingOffice(this.dwpPresentingOffice).dwpIsOfficerAttending(this.dwpIsOfficerAttending)
+        .dwpUcb(this.dwpUcb).dwpPhme(this.dwpPhme).dwpComplexAppeal(this.dwpComplexAppeal).dwpFurtherInfo(this.dwpFurtherInfo).correspondence(this.correspondence)
+        .interlocReferralDate(this.interlocReferralDate).interlocReferralReason(this.interlocReferralReason).dwpRegionalCentre(this.dwpRegionalCentre).generateNotice(this.generateNotice)
+        .previewDocument(this.previewDocument).bodyContent(this.bodyContent).signedBy(this.signedBy).signedRole(this.signedRole).dateAdded(this.dateAdded)
+        .historicSscsInterlocDirectionDocs(this.historicSscsInterlocDirectionDocs).dwpState(this.dwpState).appealNotePad(this.appealNotePad).dwpStateFeNoAction(this.dwpStateFeNoAction)
+        .createdInGapsFrom(this.createdInGapsFrom).dateCaseSentToGaps(this.dateCaseSentToGaps).associatedCase(this.associatedCase).dwpAT38Document(this.dwpAT38Document)
+        .dwpEvidenceBundleDocument(this.dwpEvidenceBundleDocument).dwpResponseDocument(this.dwpResponseDocument).dwpSupplementaryResponseDoc(this.dwpSupplementaryResponseDoc)
+        .dwpOtherDoc(this.dwpOtherDoc).dwpLT203(this.dwpLT203).dwpLapseLetter(this.dwpLapseLetter).dwpResponseDate(this.dwpResponseDate).linkedCasesBoolean(this.linkedCasesBoolean)
+        .decisionType(this.decisionType).selectWhoReviewsCase(this.selectWhoReviewsCase).directionType(this.directionType).directionTypeDl(this.directionTypeDl)
+        .extensionNextEvent(this.extensionNextEvent).extensionNextEventDl(this.extensionNextEventDl).tl1Form(this.tl1Form).isInterlocRequired(this.isInterlocRequired).panel(this.panel)
+        .evidenceReceived(this.evidenceReceived).urgentCase(this.urgentCase).urgentHearingRegistered(this.urgentHearingRegistered).urgentHearingOutcome(this.urgentHearingOutcome)
+        .documentSentToDwp(this.documentSentToDwp).directionDueDate(this.directionDueDate).reservedToJudge(this.reservedToJudge).linkedCase(this.linkedCase).isWaiverNeeded(this.isWaiverNeeded)
+        .waiverDeclaration(this.waiverDeclaration).waiverReason(this.waiverReason).waiverReasonOther(this.waiverReasonOther).clerkDelegatedAuthority(this.clerkDelegatedAuthority)
+        .clerkAppealSatisfactionText(this.clerkAppealSatisfactionText).pipWriteFinalDecisionDailyLivingActivitiesQuestion(this.pipWriteFinalDecisionDailyLivingActivitiesQuestion)
+        .pipWriteFinalDecisionMobilityActivitiesQuestion(this.pipWriteFinalDecisionMobilityActivitiesQuestion).clerkConfirmationOfMrn(this.clerkConfirmationOfMrn)
+        .clerkOtherReason(this.clerkOtherReason).clerkConfirmationOther(this.clerkConfirmationOther).responseRequired(this.responseRequired).timeExtensionRequested(this.timeExtensionRequested)
+        .bundleConfiguration(this.bundleConfiguration).pcqId(this.pcqId).writeFinalDecisionIsDescriptorFlow(this.writeFinalDecisionIsDescriptorFlow)
+        .writeFinalDecisionGenerateNotice(this.writeFinalDecisionGenerateNotice).writeFinalDecisionAllowedOrRefused(this.writeFinalDecisionAllowedOrRefused)
+        .writeFinalDecisionTypeOfHearing(this.writeFinalDecisionTypeOfHearing).writeFinalDecisionPresentingOfficerAttendedQuestion(this.writeFinalDecisionPresentingOfficerAttendedQuestion)
+        .writeFinalDecisionAppellantAttendedQuestion(this.writeFinalDecisionAppellantAttendedQuestion).pipWriteFinalDecisionDailyLivingQuestion(this.pipWriteFinalDecisionDailyLivingQuestion)
+        .pipWriteFinalDecisionComparedToDwpDailyLivingQuestion(this.pipWriteFinalDecisionComparedToDwpDailyLivingQuestion)
+        .pipWriteFinalDecisionMobilityQuestion(this.pipWriteFinalDecisionMobilityQuestion)
+        .pipWriteFinalDecisionComparedToDwpMobilityQuestion(this.pipWriteFinalDecisionComparedToDwpMobilityQuestion).writeFinalDecisionStartDate(this.writeFinalDecisionStartDate)
+        .writeFinalDecisionEndDateType(this.writeFinalDecisionEndDateType).writeFinalDecisionEndDate(this.writeFinalDecisionEndDate)
+        .writeFinalDecisionDisabilityQualifiedPanelMemberName(this.writeFinalDecisionDisabilityQualifiedPanelMemberName)
+        .writeFinalDecisionMedicallyQualifiedPanelMemberName(this.writeFinalDecisionMedicallyQualifiedPanelMemberName)
+        .writeFinalDecisionOtherPanelMemberName(this.writeFinalDecisionOtherPanelMemberName).writeFinalDecisionDateOfDecision(this.writeFinalDecisionDateOfDecision)
+        .writeFinalDecisionDetailsOfDecision(this.writeFinalDecisionDetailsOfDecision).writeFinalDecisionReasons(this.writeFinalDecisionReasons)
+        .pipWriteFinalDecisionPreparingFoodQuestion(this.pipWriteFinalDecisionPreparingFoodQuestion).pipWriteFinalDecisionTakingNutritionQuestion(this.pipWriteFinalDecisionTakingNutritionQuestion)
+        .pipWriteFinalDecisionManagingTherapyQuestion(this.pipWriteFinalDecisionManagingTherapyQuestion).pipWriteFinalDecisionWashAndBatheQuestion(this.pipWriteFinalDecisionWashAndBatheQuestion)
+        .pipWriteFinalDecisionManagingToiletNeedsQuestion(this.pipWriteFinalDecisionManagingToiletNeedsQuestion)
+        .pipWriteFinalDecisionDressingAndUndressingQuestion(this.pipWriteFinalDecisionDressingAndUndressingQuestion)
+        .pipWriteFinalDecisionCommunicatingQuestion(this.pipWriteFinalDecisionCommunicatingQuestion)
+        .pipWriteFinalDecisionReadingUnderstandingQuestion(this.pipWriteFinalDecisionReadingUnderstandingQuestion)
+        .pipWriteFinalDecisionEngagingWithOthersQuestion(this.pipWriteFinalDecisionEngagingWithOthersQuestion)
+        .pipWriteFinalDecisionBudgetingDecisionsQuestion(this.pipWriteFinalDecisionBudgetingDecisionsQuestion)
+        .pipWriteFinalDecisionPlanningAndFollowingQuestion(this.pipWriteFinalDecisionPlanningAndFollowingQuestion)
+        .pipWriteFinalDecisionMovingAroundQuestion(this.pipWriteFinalDecisionMovingAroundQuestion).writeFinalDecisionPageSectionReference(this.writeFinalDecisionPageSectionReference)
+        .writeFinalDecisionAnythingElse(this.writeFinalDecisionAnythingElse).writeFinalDecisionPreviewDocument(this.writeFinalDecisionPreviewDocument)
+        .writeFinalDecisionGeneratedDate(this.writeFinalDecisionGeneratedDate).adjournCaseGenerateNotice(this.adjournCaseGenerateNotice).adjournCaseTypeOfHearing(this.adjournCaseTypeOfHearing)
+        .adjournCaseCanCaseBeListedRightAway(this.adjournCaseCanCaseBeListedRightAway).adjournCaseAreDirectionsBeingMadeToParties(this.adjournCaseAreDirectionsBeingMadeToParties)
+        .adjournCaseDirectionsDueDateDaysOffset(this.adjournCaseDirectionsDueDateDaysOffset).adjournCaseDirectionsDueDate(this.adjournCaseDirectionsDueDate)
+        .adjournCaseTypeOfNextHearing(this.adjournCaseTypeOfNextHearing).adjournCaseNextHearingVenue(this.adjournCaseNextHearingVenue)
+        .adjournCaseNextHearingVenueSelected(this.adjournCaseNextHearingVenueSelected).adjournCasePanelMembersExcluded(this.adjournCasePanelMembersExcluded)
+        .adjournCaseDisabilityQualifiedPanelMemberName(this.adjournCaseDisabilityQualifiedPanelMemberName)
+        .adjournCaseMedicallyQualifiedPanelMemberName(this.adjournCaseMedicallyQualifiedPanelMemberName).adjournCaseOtherPanelMemberName(this.adjournCaseOtherPanelMemberName)
+        .adjournCaseNextHearingListingDurationType(this.adjournCaseNextHearingListingDurationType).adjournCaseNextHearingListingDuration(this.adjournCaseNextHearingListingDuration)
+        .adjournCaseNextHearingListingDurationUnits(this.adjournCaseNextHearingListingDurationUnits).adjournCaseInterpreterRequired(this.adjournCaseInterpreterRequired)
+        .adjournCaseInterpreterLanguage(this.adjournCaseInterpreterLanguage).adjournCaseNextHearingDateType(this.adjournCaseNextHearingDateType)
+        .adjournCaseNextHearingDateOrPeriod(this.adjournCaseNextHearingDateOrPeriod).adjournCaseNextHearingDateOrTime(this.adjournCaseNextHearingDateOrTime)
+        .adjournCaseNextHearingFirstAvailableDateAfterDate(this.adjournCaseNextHearingFirstAvailableDateAfterDate)
+        .adjournCaseNextHearingFirstAvailableDateAfterPeriod(this.adjournCaseNextHearingFirstAvailableDateAfterPeriod).adjournCaseTime(this.adjournCaseTime)
+        .adjournCaseReasons(this.adjournCaseReasons).adjournCaseAdditionalDirections(this.adjournCaseAdditionalDirections).adjournCasePreviewDocument(this.adjournCasePreviewDocument)
+        .adjournCaseGeneratedDate(this.adjournCaseGeneratedDate).notListableProvideReasons(this.notListableProvideReasons).notListableDueDate(this.notListableDueDate)
+        .updateNotListableDirectionsFulfilled(this.updateNotListableDirectionsFulfilled).updateNotListableInterlocReview(this.updateNotListableInterlocReview)
+        .updateNotListableWhoReviewsCase(this.updateNotListableWhoReviewsCase).updateNotListableSetNewDueDate(this.updateNotListableSetNewDueDate)
+        .updateNotListableDueDate(this.updateNotListableDueDate).updateNotListableWhereShouldCaseMoveTo(this.updateNotListableWhereShouldCaseMoveTo)
+        .languagePreferenceWelsh(this.languagePreferenceWelsh).elementsDisputedList(this.elementsDisputedList).elementsDisputedGeneral(this.elementsDisputedGeneral)
+        .elementsDisputedSanctions(this.elementsDisputedSanctions).elementsDisputedOverpayment(this.elementsDisputedOverpayment).elementsDisputedHousing(this.elementsDisputedHousing)
+        .elementsDisputedChildCare(this.elementsDisputedChildCare).elementsDisputedCare(this.elementsDisputedCare).elementsDisputedChildElement(this.elementsDisputedChildElement)
+        .elementsDisputedChildDisabled(this.elementsDisputedChildDisabled).elementsDisputedIsDecisionDisputedByOthers(this.elementsDisputedIsDecisionDisputedByOthers)
+        .elementsDisputedLinkedAppealRef(this.elementsDisputedLinkedAppealRef).jointParty(this.jointParty).jointPartyName(this.jointPartyName).jointPartyIdentity(this.jointPartyIdentity)
+        .jointPartyAddressSameAsAppellant(this.jointPartyAddressSameAsAppellant).jointPartyAddress(this.jointPartyAddress).translationWorkOutstanding(this.translationWorkOutstanding)
+        .sscsWelshDocuments(this.sscsWelshDocuments).sscsWelshPreviewDocuments(this.sscsWelshPreviewDocuments).sscsWelshPreviewNextEvent(this.sscsWelshPreviewNextEvent)
+        .originalDocuments(this.originalDocuments).originalNoticeDocuments(this.originalNoticeDocuments).documentTypes(this.documentTypes).welshBodyContent(this.welshBodyContent)
+        .englishBodyContent(this.englishBodyContent).isScottishCase(this.isScottishCase).reinstatementRegistered(this.reinstatementRegistered).reinstatementOutcome(this.reinstatementOutcome)
+        .welshInterlocNextReviewState(this.welshInterlocNextReviewState).confidentialityRequestOutcomeAppellant(this.confidentialityRequestOutcomeAppellant)
+        .confidentialityRequestOutcomeJointParty(this.confidentialityRequestOutcomeJointParty).confidentialityRequestAppellantGrantedOrRefused(this.confidentialityRequestAppellantGrantedOrRefused)
+        .confidentialityRequestJointPartyGrantedOrRefused(this.confidentialityRequestJointPartyGrantedOrRefused).formType(this.formType).isProgressingViaGaps(this.isProgressingViaGaps)
+        .wcaAppeal(this.wcaAppeal).supportGroupOnlyAppeal(this.supportGroupOnlyAppeal).esaWriteFinalDecisionPhysicalDisabilitiesQuestion(this.esaWriteFinalDecisionPhysicalDisabilitiesQuestion)
+        .esaWriteFinalDecisionMentalAssessmentQuestion(this.esaWriteFinalDecisionMentalAssessmentQuestion)
+        .esaWriteFinalDecisionMobilisingUnaidedQuestion(this.esaWriteFinalDecisionMobilisingUnaidedQuestion)
+        .esaWriteFinalDecisionStandingAndSittingQuestion(this.esaWriteFinalDecisionStandingAndSittingQuestion).esaWriteFinalDecisionReachingQuestion(this.esaWriteFinalDecisionReachingQuestion)
+        .esaWriteFinalDecisionPickingUpQuestion(this.esaWriteFinalDecisionPickingUpQuestion).esaWriteFinalDecisionManualDexterityQuestion(this.esaWriteFinalDecisionManualDexterityQuestion)
+        .esaWriteFinalDecisionMakingSelfUnderstoodQuestion(this.esaWriteFinalDecisionMakingSelfUnderstoodQuestion)
+        .esaWriteFinalDecisionCommunicationQuestion(this.esaWriteFinalDecisionCommunicationQuestion).esaWriteFinalDecisionNavigationQuestion(this.esaWriteFinalDecisionNavigationQuestion)
+        .esaWriteFinalDecisionLossOfControlQuestion(this.esaWriteFinalDecisionLossOfControlQuestion).esaWriteFinalDecisionConsciousnessQuestion(this.esaWriteFinalDecisionConsciousnessQuestion)
+        .esaWriteFinalDecisionLearningTasksQuestion(this.esaWriteFinalDecisionLearningTasksQuestion)
+        .esaWriteFinalDecisionAwarenessOfHazardsQuestion(this.esaWriteFinalDecisionAwarenessOfHazardsQuestion)
+        .esaWriteFinalDecisionPersonalActionQuestion(this.esaWriteFinalDecisionPersonalActionQuestion)
+        .esaWriteFinalDecisionCopingWithChangeQuestion(this.esaWriteFinalDecisionCopingWithChangeQuestion).esaWriteFinalDecisionGettingAboutQuestion(this.esaWriteFinalDecisionGettingAboutQuestion)
+        .esaWriteFinalDecisionSocialEngagementQuestion(this.esaWriteFinalDecisionSocialEngagementQuestion)
+        .esaWriteFinalDecisionAppropriatenessOfBehaviourQuestion(this.esaWriteFinalDecisionAppropriatenessOfBehaviourQuestion).doesRegulation29Apply(this.doesRegulation29Apply)
+        .showRegulation29Page(this.showRegulation29Page).showSchedule3ActivitiesPage(this.showSchedule3ActivitiesPage)
+        .esaWriteFinalDecisionSchedule3ActivitiesApply(this.esaWriteFinalDecisionSchedule3ActivitiesApply)
+        .esaWriteFinalDecisionSchedule3ActivitiesQuestion(this.esaWriteFinalDecisionSchedule3ActivitiesQuestion).doesRegulation35Apply(this.doesRegulation35Apply)
+        .showFinalDecisionNoticeSummaryOfOutcomePage(this.showFinalDecisionNoticeSummaryOfOutcomePage).test1(this.test1).test2(this.test2);
     }
 
-    public void setCcdCaseId(String ccdCaseId) {
-        this.ccdCaseId = ccdCaseId;
-    }
-
-    public State getState() {
-        return state;
-    }
-
-    public void setState(State state) {
-        this.state = state;
-    }
-
-    public State getPreviousState() {
-        return previousState;
-    }
-
-    public void setPreviousState(State previousState) {
-        this.previousState = previousState;
-    }
-
-    public String getCaseReference() {
-        return caseReference;
-    }
-
-    public void setCaseReference(String caseReference) {
-        this.caseReference = caseReference;
-    }
-
-    public String getCaseCreated() {
-        return caseCreated;
-    }
-
-    public void setCaseCreated(String caseCreated) {
-        this.caseCreated = caseCreated;
-    }
-
-    public InfoRequests getInfoRequests() {
-        return infoRequests;
-    }
-
-    public void setInfoRequests(InfoRequests infoRequests) {
-        this.infoRequests = infoRequests;
-    }
-
-    public String getRegion() {
-        return region;
-    }
-
-    public void setRegion(String region) {
-        this.region = region;
-    }
-
-    public Appeal getAppeal() {
-        return appeal;
-    }
-
-    public void setAppeal(Appeal appeal) {
-        this.appeal = appeal;
-    }
-
-    public List<Hearing> getHearings() {
-        return hearings;
-    }
-
-    public void setHearings(List<Hearing> hearings) {
-        this.hearings = hearings;
-    }
-
-    public Evidence getEvidence() {
-        return evidence;
-    }
-
-    public void setEvidence(Evidence evidence) {
-        this.evidence = evidence;
-    }
-
-    public List<DwpTimeExtension> getDwpTimeExtension() {
-        return dwpTimeExtension;
-    }
-
-    public void setDwpTimeExtension(List<DwpTimeExtension> dwpTimeExtension) {
-        this.dwpTimeExtension = dwpTimeExtension;
-    }
-
-    public List<Event> getEvents() {
-        return events;
-    }
-
-    public void setEvents(List<Event> events) {
-        this.events = events;
-    }
-
-    public void setSubscriptions(Subscriptions subscriptions) {
-        this.subscriptions = subscriptions;
-    }
-
-    public RegionalProcessingCenter getRegionalProcessingCenter() {
-        return regionalProcessingCenter;
-    }
-
-    public void setRegionalProcessingCenter(RegionalProcessingCenter regionalProcessingCenter) {
-        this.regionalProcessingCenter = regionalProcessingCenter;
-    }
-
-    public List<Bundle> getCaseBundles() {
-        return caseBundles;
-    }
-
-    public void setCaseBundles(List<Bundle> caseBundles) {
-        this.caseBundles = caseBundles;
-    }
-
-    public List<SscsDocument> getSscsDocument() {
-        return sscsDocument;
-    }
-
-    public void setSscsDocument(List<SscsDocument> sscsDocument) {
-        this.sscsDocument = sscsDocument;
-    }
-
-    public List<SscsDocument> getDraftSscsDocument() {
-        return draftSscsDocument;
-    }
-
-    public void setDraftSscsDocument(List<SscsDocument> draftSscsDocument) {
-        this.draftSscsDocument = draftSscsDocument;
-    }
-
-    public List<SscsFurtherEvidenceDoc> getDraftSscsFurtherEvidenceDocument() {
-        return draftSscsFurtherEvidenceDocument;
-    }
-
-    public void setDraftSscsFurtherEvidenceDocument(List<SscsFurtherEvidenceDoc> draftSscsFurtherEvidenceDocument) {
-        this.draftSscsFurtherEvidenceDocument = draftSscsFurtherEvidenceDocument;
-    }
-
-    public List<CorDocument> getCorDocument() {
-        return corDocument;
-    }
-
-    public void setCorDocument(List<CorDocument> corDocument) {
-        this.corDocument = corDocument;
-    }
-
-    public List<CorDocument> getDraftCorDocument() {
-        return draftCorDocument;
-    }
-
-    public void setDraftCorDocument(List<CorDocument> draftCorDocument) {
-        this.draftCorDocument = draftCorDocument;
-    }
-
-    public SscsInterlocDecisionDocument getSscsInterlocDecisionDocument() {
-        return sscsInterlocDecisionDocument;
-    }
-
-    public void setSscsInterlocDecisionDocument(SscsInterlocDecisionDocument sscsInterlocDecisionDocument) {
-        this.sscsInterlocDecisionDocument = sscsInterlocDecisionDocument;
-    }
-
-    public SscsInterlocDirectionDocument getSscsInterlocDirectionDocument() {
-        return sscsInterlocDirectionDocument;
-    }
-
-    public void setSscsInterlocDirectionDocument(SscsInterlocDirectionDocument sscsInterlocDirectionDocument) {
-        this.sscsInterlocDirectionDocument = sscsInterlocDirectionDocument;
-    }
-
-    public SscsStrikeOutDocument getSscsStrikeOutDocument() {
-        return sscsStrikeOutDocument;
-    }
-
-    public void setSscsStrikeOutDocument(SscsStrikeOutDocument sscsStrikeOutDocument) {
-        this.sscsStrikeOutDocument = sscsStrikeOutDocument;
-    }
-
-    public String getGeneratedNino() {
-        return generatedNino;
-    }
-
-    public void setGeneratedNino(String generatedNino) {
-        this.generatedNino = generatedNino;
-    }
-
-    public String getGeneratedSurname() {
-        return generatedSurname;
-    }
-
-    public void setGeneratedSurname(String generatedSurname) {
-        this.generatedSurname = generatedSurname;
-    }
-
-    public String getGeneratedEmail() {
-        return generatedEmail;
-    }
-
-    public void setGeneratedEmail(String generatedEmail) {
-        this.generatedEmail = generatedEmail;
-    }
-
-    public String getGeneratedMobile() {
-        return generatedMobile;
-    }
-
-    public void setGeneratedMobile(String generatedMobile) {
-        this.generatedMobile = generatedMobile;
-    }
-
-    public String getGeneratedDob() {
-        return generatedDob;
-    }
-
-    public void setGeneratedDob(String generatedDob) {
-        this.generatedDob = generatedDob;
-    }
-
-    public DirectionResponse getDirectionResponse() {
-        return directionResponse;
-    }
-
-    public void setDirectionResponse(DirectionResponse directionResponse) {
-        this.directionResponse = directionResponse;
-    }
-
-    public String getEvidencePresent() {
-        return evidencePresent;
-    }
-
-    public void setEvidencePresent(String evidencePresent) {
-        this.evidencePresent = evidencePresent;
-    }
-
-    public String getBulkScanCaseReference() {
-        return bulkScanCaseReference;
-    }
-
-    public void setBulkScanCaseReference(String bulkScanCaseReference) {
-        this.bulkScanCaseReference = bulkScanCaseReference;
-    }
-
-    public String getDecisionNotes() {
-        return decisionNotes;
-    }
-
-    public void setDecisionNotes(String decisionNotes) {
-        this.decisionNotes = decisionNotes;
-    }
-
-    public String getIsCorDecision() {
-        return isCorDecision;
-    }
-
-    public void setIsCorDecision(String isCorDecision) {
-        this.isCorDecision = isCorDecision;
-    }
-
-    public String getRelistingReason() {
-        return relistingReason;
-    }
-
-    public void setRelistingReason(String relistingReason) {
-        this.relistingReason = relistingReason;
-    }
-
-    public String getDateSentToDwp() {
-        return dateSentToDwp;
-    }
-
-    public void setDateSentToDwp(String dateSentToDwp) {
-        this.dateSentToDwp = dateSentToDwp;
-    }
-
-    public String getInterlocReviewState() {
-        return interlocReviewState;
-    }
-
-    public void setInterlocReviewState(String interlocReviewState) {
-        this.interlocReviewState = interlocReviewState;
-    }
-
-    public String getHmctsDwpState() {
-        return hmctsDwpState;
-    }
-
-    public void setHmctsDwpState(String hmctsDwpState) {
-        this.hmctsDwpState = hmctsDwpState;
-    }
-
-    public String getDwpFurtherEvidenceStates() {
-        return dwpFurtherEvidenceStates;
-    }
-
-    public void setDwpFurtherEvidenceStates(String dwpFurtherEvidenceStates) {
-        this.dwpFurtherEvidenceStates = dwpFurtherEvidenceStates;
-    }
-
-    public DynamicList getOriginalSender() {
-        return originalSender;
-    }
-
-    public void setOriginalSender(DynamicList originalSender) {
-        this.originalSender = originalSender;
-    }
-
-    public DynamicList getFurtherEvidenceAction() {
-        return furtherEvidenceAction;
-    }
-
-    public void setFurtherEvidenceAction(DynamicList furtherEvidenceAction) {
-        this.furtherEvidenceAction = furtherEvidenceAction;
-    }
-
-    public List<ScannedDocument> getScannedDocuments() {
-        return scannedDocuments;
-    }
-
-    public void setScannedDocuments(List<ScannedDocument> scannedDocuments) {
-        this.scannedDocuments = scannedDocuments;
-    }
-
-    public String getInformationFromAppellant() {
-        return informationFromAppellant;
-    }
-
-    public void setInformationFromAppellant(String informationFromAppellant) {
-        this.informationFromAppellant = informationFromAppellant;
-    }
-
-    public String getOutcome() {
-        return outcome;
-    }
-
-    public void setOutcome(String outcome) {
-        this.outcome = outcome;
-    }
-
-    public String getEvidenceHandled() {
-        return evidenceHandled;
-    }
-
-    public void setEvidenceHandled(String evidenceHandled) {
-        this.evidenceHandled = evidenceHandled;
-    }
-
-    public String getAssignedToJudge() {
-        return assignedToJudge;
-    }
-
-    public void setAssignedToJudge(String assignedToJudge) {
-        this.assignedToJudge = assignedToJudge;
-    }
-
-    public String getAssignedToDisabilityMember() {
-        return assignedToDisabilityMember;
-    }
-
-    public void setAssignedToDisabilityMember(String assignedToDisabilityMember) {
-        this.assignedToDisabilityMember = assignedToDisabilityMember;
-    }
-
-    public String getAssignedToMedicalMember() {
-        return assignedToMedicalMember;
-    }
-
-    public void setAssignedToMedicalMember(String assignedToMedicalMember) {
-        this.assignedToMedicalMember = assignedToMedicalMember;
-    }
-
-    public DynamicList getReissueFurtherEvidenceDocument() {
-        return reissueFurtherEvidenceDocument;
-    }
-
-    public void setReissueFurtherEvidenceDocument(DynamicList reissueFurtherEvidenceDocument) {
-        this.reissueFurtherEvidenceDocument = reissueFurtherEvidenceDocument;
-    }
-
-    public String getResendToAppellant() {
-        return resendToAppellant;
-    }
-
-    public void setResendToAppellant(String resendToAppellant) {
-        this.resendToAppellant = resendToAppellant;
-    }
-
-    public String getResendToRepresentative() {
-        return resendToRepresentative;
-    }
-
-    public void setResendToRepresentative(String resendToRepresentative) {
-        this.resendToRepresentative = resendToRepresentative;
-    }
-
-    public String getResendToDwp() {
-        return resendToDwp;
-    }
-
-    public void setResendToDwp(String resendToDwp) {
-        this.resendToDwp = resendToDwp;
-    }
-
-    public String getCaseCode() {
-        return caseCode;
-    }
-
-    public void setCaseCode(String caseCode) {
-        this.caseCode = caseCode;
-    }
-
-    public String getBenefitCode() {
-        return benefitCode;
-    }
-
-    public void setBenefitCode(String benefitCode) {
-        this.benefitCode = benefitCode;
-    }
-
-    public String getIssueCode() {
-        return issueCode;
-    }
-
-    public void setIssueCode(String issueCode) {
-        this.issueCode = issueCode;
-    }
-
-    public DynamicList getDwpOriginatingOffice() {
-        return dwpOriginatingOffice;
-    }
-
-    public void setDwpOriginatingOffice(DynamicList dwpOriginatingOffice) {
-        this.dwpOriginatingOffice = dwpOriginatingOffice;
-    }
-
-    public DynamicList getDwpPresentingOffice() {
-        return dwpPresentingOffice;
-    }
-
-    public void setDwpPresentingOffice(DynamicList dwpPresentingOffice) {
-        this.dwpPresentingOffice = dwpPresentingOffice;
-    }
-
-    public String getDwpIsOfficerAttending() {
-        return dwpIsOfficerAttending;
-    }
-
-    public void setDwpIsOfficerAttending(String dwpIsOfficerAttending) {
-        this.dwpIsOfficerAttending = dwpIsOfficerAttending;
-    }
-
-    public String getDwpUcb() {
-        return dwpUcb;
-    }
-
-    public void setDwpUcb(String dwpUcb) {
-        this.dwpUcb = dwpUcb;
-    }
-
-    public String getDwpPhme() {
-        return dwpPhme;
-    }
-
-    public void setDwpPhme(String dwpPhme) {
-        this.dwpPhme = dwpPhme;
-    }
-
-    public String getDwpComplexAppeal() {
-        return dwpComplexAppeal;
-    }
-
-    public void setDwpComplexAppeal(String dwpComplexAppeal) {
-        this.dwpComplexAppeal = dwpComplexAppeal;
-    }
-
-    public String getDwpFurtherInfo() {
-        return dwpFurtherInfo;
-    }
-
-    public void setDwpFurtherInfo(String dwpFurtherInfo) {
-        this.dwpFurtherInfo = dwpFurtherInfo;
-    }
-
-    public List<Correspondence> getCorrespondence() {
-        return correspondence;
-    }
-
-    public void setCorrespondence(List<Correspondence> correspondence) {
-        this.correspondence = correspondence;
-    }
-
-    public String getInterlocReferralDate() {
-        return interlocReferralDate;
-    }
-
-    public void setInterlocReferralDate(String interlocReferralDate) {
-        this.interlocReferralDate = interlocReferralDate;
-    }
-
-    public String getInterlocReferralReason() {
-        return interlocReferralReason;
-    }
-
-    public void setInterlocReferralReason(String interlocReferralReason) {
-        this.interlocReferralReason = interlocReferralReason;
-    }
-
-    public String getDwpRegionalCentre() {
-        return dwpRegionalCentre;
-    }
-
-    public void setDwpRegionalCentre(String dwpRegionalCentre) {
-        this.dwpRegionalCentre = dwpRegionalCentre;
-    }
-
-    public String getGenerateNotice() {
-        return generateNotice;
-    }
-
-    public void setGenerateNotice(String generateNotice) {
-        this.generateNotice = generateNotice;
-    }
-
-    public DocumentLink getPreviewDocument() {
-        return previewDocument;
-    }
-
-    public void setPreviewDocument(DocumentLink previewDocument) {
-        this.previewDocument = previewDocument;
-    }
-
-    public String getBodyContent() {
-        return bodyContent;
-    }
-
-    public void setBodyContent(String bodyContent) {
-        this.bodyContent = bodyContent;
-    }
-
-    public String getSignedBy() {
-        return signedBy;
-    }
-
-    public void setSignedBy(String signedBy) {
-        this.signedBy = signedBy;
-    }
-
-    public String getSignedRole() {
-        return signedRole;
-    }
-
-    public void setSignedRole(String signedRole) {
-        this.signedRole = signedRole;
-    }
-
-    public LocalDate getDateAdded() {
-        return dateAdded;
-    }
-
-    public void setDateAdded(LocalDate dateAdded) {
-        this.dateAdded = dateAdded;
-    }
-
-    public List<SscsInterlocDirectionDocuments> getHistoricSscsInterlocDirectionDocs() {
-        return historicSscsInterlocDirectionDocs;
-    }
-
-    public void setHistoricSscsInterlocDirectionDocs(List<SscsInterlocDirectionDocuments> historicSscsInterlocDirectionDocs) {
-        this.historicSscsInterlocDirectionDocs = historicSscsInterlocDirectionDocs;
-    }
-
-    public String getDwpState() {
-        return dwpState;
-    }
-
-    public void setDwpState(String dwpState) {
-        this.dwpState = dwpState;
-    }
-
-    public NotePad getAppealNotePad() {
-        return appealNotePad;
-    }
-
-    public void setAppealNotePad(NotePad appealNotePad) {
-        this.appealNotePad = appealNotePad;
-    }
-
-    public DynamicList getDwpStateFeNoAction() {
-        return dwpStateFeNoAction;
-    }
-
-    public void setDwpStateFeNoAction(DynamicList dwpStateFeNoAction) {
-        this.dwpStateFeNoAction = dwpStateFeNoAction;
-    }
-
-    public String getCreatedInGapsFrom() {
-        return createdInGapsFrom;
-    }
-
-    public void setCreatedInGapsFrom(String createdInGapsFrom) {
-        this.createdInGapsFrom = createdInGapsFrom;
-    }
-
-    public String getDateCaseSentToGaps() {
-        return dateCaseSentToGaps;
-    }
-
-    public void setDateCaseSentToGaps(String dateCaseSentToGaps) {
-        this.dateCaseSentToGaps = dateCaseSentToGaps;
-    }
-
-    public List<CaseLink> getAssociatedCase() {
-        return associatedCase;
-    }
-
-    public void setAssociatedCase(List<CaseLink> associatedCase) {
-        this.associatedCase = associatedCase;
-    }
-
-    public DwpResponseDocument getDwpAT38Document() {
-        return dwpAT38Document;
-    }
-
-    public void setDwpAT38Document(DwpResponseDocument dwpAT38Document) {
-        this.dwpAT38Document = dwpAT38Document;
-    }
-
-    public DwpResponseDocument getDwpEvidenceBundleDocument() {
-        return dwpEvidenceBundleDocument;
-    }
-
-    public void setDwpEvidenceBundleDocument(DwpResponseDocument dwpEvidenceBundleDocument) {
-        this.dwpEvidenceBundleDocument = dwpEvidenceBundleDocument;
-    }
-
-    public DwpResponseDocument getDwpResponseDocument() {
-        return dwpResponseDocument;
-    }
-
-    public void setDwpResponseDocument(DwpResponseDocument dwpResponseDocument) {
-        this.dwpResponseDocument = dwpResponseDocument;
-    }
-
-    public DwpResponseDocument getDwpSupplementaryResponseDoc() {
-        return dwpSupplementaryResponseDoc;
-    }
-
-    public void setDwpSupplementaryResponseDoc(DwpResponseDocument dwpSupplementaryResponseDoc) {
-        this.dwpSupplementaryResponseDoc = dwpSupplementaryResponseDoc;
-    }
-
-    public DwpResponseDocument getDwpOtherDoc() {
-        return dwpOtherDoc;
-    }
-
-    public void setDwpOtherDoc(DwpResponseDocument dwpOtherDoc) {
-        this.dwpOtherDoc = dwpOtherDoc;
-    }
-
-    public DwpLT203 getDwpLT203() {
-        return dwpLT203;
-    }
-
-    public void setDwpLT203(DwpLT203 dwpLT203) {
-        this.dwpLT203 = dwpLT203;
-    }
-
-    public DwpLapseLetter getDwpLapseLetter() {
-        return dwpLapseLetter;
-    }
-
-    public void setDwpLapseLetter(DwpLapseLetter dwpLapseLetter) {
-        this.dwpLapseLetter = dwpLapseLetter;
-    }
-
-    public String getDwpResponseDate() {
-        return dwpResponseDate;
-    }
-
-    public void setDwpResponseDate(String dwpResponseDate) {
-        this.dwpResponseDate = dwpResponseDate;
-    }
-
-    public String getLinkedCasesBoolean() {
-        return linkedCasesBoolean;
-    }
-
-    public void setLinkedCasesBoolean(String linkedCasesBoolean) {
-        this.linkedCasesBoolean = linkedCasesBoolean;
-    }
-
-    public String getDecisionType() {
-        return decisionType;
-    }
-
-    public void setDecisionType(String decisionType) {
-        this.decisionType = decisionType;
-    }
-
-    public DynamicList getSelectWhoReviewsCase() {
-        return selectWhoReviewsCase;
-    }
-
-    public void setSelectWhoReviewsCase(DynamicList selectWhoReviewsCase) {
-        this.selectWhoReviewsCase = selectWhoReviewsCase;
-    }
-
-    public DirectionType getDirectionType() {
-        return directionType;
-    }
-
-    public void setDirectionType(DirectionType directionType) {
-        this.directionType = directionType;
-    }
-
-    public DynamicList getDirectionTypeDl() {
-        return directionTypeDl;
-    }
-
-    public void setDirectionTypeDl(DynamicList directionTypeDl) {
-        this.directionTypeDl = directionTypeDl;
-    }
-
-    public ExtensionNextEvent getExtensionNextEvent() {
-        return extensionNextEvent;
-    }
-
-    public void setExtensionNextEvent(ExtensionNextEvent extensionNextEvent) {
-        this.extensionNextEvent = extensionNextEvent;
-    }
-
-    public DynamicList getExtensionNextEventDl() {
-        return extensionNextEventDl;
-    }
-
-    public void setExtensionNextEventDl(DynamicList extensionNextEventDl) {
-        this.extensionNextEventDl = extensionNextEventDl;
-    }
-
-    public DwpResponseDocument getTl1Form() {
-        return tl1Form;
-    }
-
-    public void setTl1Form(DwpResponseDocument tl1Form) {
-        this.tl1Form = tl1Form;
-    }
-
-    public String getIsInterlocRequired() {
-        return isInterlocRequired;
-    }
-
-    public void setIsInterlocRequired(String isInterlocRequired) {
-        this.isInterlocRequired = isInterlocRequired;
-    }
-
-    public Panel getPanel() {
-        return panel;
-    }
-
-    public void setPanel(Panel panel) {
-        this.panel = panel;
-    }
-
-    public EvidenceReceived getEvidenceReceived() {
-        return evidenceReceived;
-    }
-
-    public void setEvidenceReceived(EvidenceReceived evidenceReceived) {
-        this.evidenceReceived = evidenceReceived;
-    }
-
-    public String getUrgentCase() {
-        return urgentCase;
-    }
-
-    public void setUrgentCase(String urgentCase) {
-        this.urgentCase = urgentCase;
-    }
-
-    public String getUrgentHearingRegistered() {
-        return urgentHearingRegistered;
-    }
-
-    public void setUrgentHearingRegistered(String urgentHearingRegistered) {
-        this.urgentHearingRegistered = urgentHearingRegistered;
-    }
-
-    public String getUrgentHearingOutcome() {
-        return urgentHearingOutcome;
-    }
-
-    public void setUrgentHearingOutcome(String urgentHearingOutcome) {
-        this.urgentHearingOutcome = urgentHearingOutcome;
-    }
-
-    public String getDocumentSentToDwp() {
-        return documentSentToDwp;
-    }
-
-    public void setDocumentSentToDwp(String documentSentToDwp) {
-        this.documentSentToDwp = documentSentToDwp;
-    }
-
-    public String getDirectionDueDate() {
-        return directionDueDate;
-    }
-
-    public void setDirectionDueDate(String directionDueDate) {
-        this.directionDueDate = directionDueDate;
-    }
-
-    public String getReservedToJudge() {
-        return reservedToJudge;
-    }
-
-    public void setReservedToJudge(String reservedToJudge) {
-        this.reservedToJudge = reservedToJudge;
-    }
-
-    public List<CaseLink> getLinkedCase() {
-        return linkedCase;
-    }
-
-    public void setLinkedCase(List<CaseLink> linkedCase) {
-        this.linkedCase = linkedCase;
-    }
-
-    public String getIsWaiverNeeded() {
-        return isWaiverNeeded;
-    }
-
-    public void setIsWaiverNeeded(String isWaiverNeeded) {
-        this.isWaiverNeeded = isWaiverNeeded;
-    }
-
-    public List<String> getWaiverDeclaration() {
-        return waiverDeclaration;
-    }
-
-    public void setWaiverDeclaration(List<String> waiverDeclaration) {
-        this.waiverDeclaration = waiverDeclaration;
-    }
-
-    public List<String> getWaiverReason() {
-        return waiverReason;
-    }
-
-    public void setWaiverReason(List<String> waiverReason) {
-        this.waiverReason = waiverReason;
-    }
-
-    public String getWaiverReasonOther() {
-        return waiverReasonOther;
-    }
-
-    public void setWaiverReasonOther(String waiverReasonOther) {
-        this.waiverReasonOther = waiverReasonOther;
-    }
-
-    public List<String> getClerkDelegatedAuthority() {
-        return clerkDelegatedAuthority;
-    }
-
-    public void setClerkDelegatedAuthority(List<String> clerkDelegatedAuthority) {
-        this.clerkDelegatedAuthority = clerkDelegatedAuthority;
-    }
-
-    public List<String> getClerkAppealSatisfactionText() {
-        return clerkAppealSatisfactionText;
-    }
-
-    public void setClerkAppealSatisfactionText(List<String> clerkAppealSatisfactionText) {
-        this.clerkAppealSatisfactionText = clerkAppealSatisfactionText;
-    }
-
-    public List<String> getPipWriteFinalDecisionDailyLivingActivitiesQuestion() {
-        return pipWriteFinalDecisionDailyLivingActivitiesQuestion;
-    }
-
-    public void setPipWriteFinalDecisionDailyLivingActivitiesQuestion(List<String> pipWriteFinalDecisionDailyLivingActivitiesQuestion) {
-        this.pipWriteFinalDecisionDailyLivingActivitiesQuestion = pipWriteFinalDecisionDailyLivingActivitiesQuestion;
-    }
-
-    public List<String> getPipWriteFinalDecisionMobilityActivitiesQuestion() {
-        return pipWriteFinalDecisionMobilityActivitiesQuestion;
-    }
-
-    public void setPipWriteFinalDecisionMobilityActivitiesQuestion(List<String> pipWriteFinalDecisionMobilityActivitiesQuestion) {
-        this.pipWriteFinalDecisionMobilityActivitiesQuestion = pipWriteFinalDecisionMobilityActivitiesQuestion;
-    }
-
-    public String getClerkConfirmationOfMrn() {
-        return clerkConfirmationOfMrn;
-    }
-
-    public void setClerkConfirmationOfMrn(String clerkConfirmationOfMrn) {
-        this.clerkConfirmationOfMrn = clerkConfirmationOfMrn;
-    }
-
-    public String getClerkOtherReason() {
-        return clerkOtherReason;
-    }
-
-    public void setClerkOtherReason(String clerkOtherReason) {
-        this.clerkOtherReason = clerkOtherReason;
-    }
-
-    public String getClerkConfirmationOther() {
-        return clerkConfirmationOther;
-    }
-
-    public void setClerkConfirmationOther(String clerkConfirmationOther) {
-        this.clerkConfirmationOther = clerkConfirmationOther;
-    }
-
-    public String getResponseRequired() {
-        return responseRequired;
-    }
-
-    public void setResponseRequired(String responseRequired) {
-        this.responseRequired = responseRequired;
-    }
-
-    public String getTimeExtensionRequested() {
-        return timeExtensionRequested;
-    }
-
-    public void setTimeExtensionRequested(String timeExtensionRequested) {
-        this.timeExtensionRequested = timeExtensionRequested;
-    }
-
-    public String getBundleConfiguration() {
-        return bundleConfiguration;
-    }
-
-    public void setBundleConfiguration(String bundleConfiguration) {
-        this.bundleConfiguration = bundleConfiguration;
-    }
-
-    public String getPcqId() {
-        return pcqId;
-    }
-
-    public void setPcqId(String pcqId) {
-        this.pcqId = pcqId;
-    }
-
-    public String getWriteFinalDecisionIsDescriptorFlow() {
-        return writeFinalDecisionIsDescriptorFlow;
-    }
-
-    public void setWriteFinalDecisionIsDescriptorFlow(String writeFinalDecisionIsDescriptorFlow) {
-        this.writeFinalDecisionIsDescriptorFlow = writeFinalDecisionIsDescriptorFlow;
-    }
-
-    public String getWriteFinalDecisionGenerateNotice() {
-        return writeFinalDecisionGenerateNotice;
-    }
-
-    public void setWriteFinalDecisionGenerateNotice(String writeFinalDecisionGenerateNotice) {
-        this.writeFinalDecisionGenerateNotice = writeFinalDecisionGenerateNotice;
-    }
-
-    public String getWriteFinalDecisionAllowedOrRefused() {
-        return writeFinalDecisionAllowedOrRefused;
-    }
-
-    public void setWriteFinalDecisionAllowedOrRefused(String writeFinalDecisionAllowedOrRefused) {
-        this.writeFinalDecisionAllowedOrRefused = writeFinalDecisionAllowedOrRefused;
-    }
-
-    public String getWriteFinalDecisionTypeOfHearing() {
-        return writeFinalDecisionTypeOfHearing;
-    }
-
-    public void setWriteFinalDecisionTypeOfHearing(String writeFinalDecisionTypeOfHearing) {
-        this.writeFinalDecisionTypeOfHearing = writeFinalDecisionTypeOfHearing;
-    }
-
-    public String getWriteFinalDecisionPresentingOfficerAttendedQuestion() {
-        return writeFinalDecisionPresentingOfficerAttendedQuestion;
-    }
-
-    public void setWriteFinalDecisionPresentingOfficerAttendedQuestion(String writeFinalDecisionPresentingOfficerAttendedQuestion) {
-        this.writeFinalDecisionPresentingOfficerAttendedQuestion = writeFinalDecisionPresentingOfficerAttendedQuestion;
-    }
-
-    public String getWriteFinalDecisionAppellantAttendedQuestion() {
-        return writeFinalDecisionAppellantAttendedQuestion;
-    }
-
-    public void setWriteFinalDecisionAppellantAttendedQuestion(String writeFinalDecisionAppellantAttendedQuestion) {
-        this.writeFinalDecisionAppellantAttendedQuestion = writeFinalDecisionAppellantAttendedQuestion;
-    }
-
-    public String getPipWriteFinalDecisionDailyLivingQuestion() {
-        return pipWriteFinalDecisionDailyLivingQuestion;
-    }
-
-    public void setPipWriteFinalDecisionDailyLivingQuestion(String pipWriteFinalDecisionDailyLivingQuestion) {
-        this.pipWriteFinalDecisionDailyLivingQuestion = pipWriteFinalDecisionDailyLivingQuestion;
-    }
-
-    public String getPipWriteFinalDecisionComparedToDwpDailyLivingQuestion() {
-        return pipWriteFinalDecisionComparedToDwpDailyLivingQuestion;
-    }
-
-    public void setPipWriteFinalDecisionComparedToDwpDailyLivingQuestion(String pipWriteFinalDecisionComparedToDwpDailyLivingQuestion) {
-        this.pipWriteFinalDecisionComparedToDwpDailyLivingQuestion = pipWriteFinalDecisionComparedToDwpDailyLivingQuestion;
-    }
-
-    public String getPipWriteFinalDecisionMobilityQuestion() {
-        return pipWriteFinalDecisionMobilityQuestion;
-    }
-
-    public void setPipWriteFinalDecisionMobilityQuestion(String pipWriteFinalDecisionMobilityQuestion) {
-        this.pipWriteFinalDecisionMobilityQuestion = pipWriteFinalDecisionMobilityQuestion;
-    }
-
-    public String getPipWriteFinalDecisionComparedToDwpMobilityQuestion() {
-        return pipWriteFinalDecisionComparedToDwpMobilityQuestion;
-    }
-
-    public void setPipWriteFinalDecisionComparedToDwpMobilityQuestion(String pipWriteFinalDecisionComparedToDwpMobilityQuestion) {
-        this.pipWriteFinalDecisionComparedToDwpMobilityQuestion = pipWriteFinalDecisionComparedToDwpMobilityQuestion;
-    }
-
-    public String getWriteFinalDecisionStartDate() {
-        return writeFinalDecisionStartDate;
-    }
-
-    public void setWriteFinalDecisionStartDate(String writeFinalDecisionStartDate) {
-        this.writeFinalDecisionStartDate = writeFinalDecisionStartDate;
-    }
-
-    public String getWriteFinalDecisionEndDateType() {
-        return writeFinalDecisionEndDateType;
-    }
-
-    public void setWriteFinalDecisionEndDateType(String writeFinalDecisionEndDateType) {
-        this.writeFinalDecisionEndDateType = writeFinalDecisionEndDateType;
-    }
-
-    public String getWriteFinalDecisionEndDate() {
-        return writeFinalDecisionEndDate;
-    }
-
-    public void setWriteFinalDecisionEndDate(String writeFinalDecisionEndDate) {
-        this.writeFinalDecisionEndDate = writeFinalDecisionEndDate;
-    }
-
-    public String getWriteFinalDecisionDisabilityQualifiedPanelMemberName() {
-        return writeFinalDecisionDisabilityQualifiedPanelMemberName;
-    }
-
-    public void setWriteFinalDecisionDisabilityQualifiedPanelMemberName(String writeFinalDecisionDisabilityQualifiedPanelMemberName) {
-        this.writeFinalDecisionDisabilityQualifiedPanelMemberName = writeFinalDecisionDisabilityQualifiedPanelMemberName;
-    }
-
-    public String getWriteFinalDecisionMedicallyQualifiedPanelMemberName() {
-        return writeFinalDecisionMedicallyQualifiedPanelMemberName;
-    }
-
-    public void setWriteFinalDecisionMedicallyQualifiedPanelMemberName(String writeFinalDecisionMedicallyQualifiedPanelMemberName) {
-        this.writeFinalDecisionMedicallyQualifiedPanelMemberName = writeFinalDecisionMedicallyQualifiedPanelMemberName;
-    }
-
-    public String getWriteFinalDecisionOtherPanelMemberName() {
-        return writeFinalDecisionOtherPanelMemberName;
-    }
-
-    public void setWriteFinalDecisionOtherPanelMemberName(String writeFinalDecisionOtherPanelMemberName) {
-        this.writeFinalDecisionOtherPanelMemberName = writeFinalDecisionOtherPanelMemberName;
-    }
-
-    public String getWriteFinalDecisionDateOfDecision() {
-        return writeFinalDecisionDateOfDecision;
-    }
-
-    public void setWriteFinalDecisionDateOfDecision(String writeFinalDecisionDateOfDecision) {
-        this.writeFinalDecisionDateOfDecision = writeFinalDecisionDateOfDecision;
-    }
-
-    public String getWriteFinalDecisionDetailsOfDecision() {
-        return writeFinalDecisionDetailsOfDecision;
-    }
-
-    public void setWriteFinalDecisionDetailsOfDecision(String writeFinalDecisionDetailsOfDecision) {
-        this.writeFinalDecisionDetailsOfDecision = writeFinalDecisionDetailsOfDecision;
-    }
-
-    public List<CollectionItem<String>> getWriteFinalDecisionReasons() {
-        return writeFinalDecisionReasons;
-    }
-
-    public void setWriteFinalDecisionReasons(List<CollectionItem<String>> writeFinalDecisionReasons) {
-        this.writeFinalDecisionReasons = writeFinalDecisionReasons;
-    }
-
-    public String getPipWriteFinalDecisionPreparingFoodQuestion() {
-        return pipWriteFinalDecisionPreparingFoodQuestion;
-    }
-
-    public void setPipWriteFinalDecisionPreparingFoodQuestion(String pipWriteFinalDecisionPreparingFoodQuestion) {
-        this.pipWriteFinalDecisionPreparingFoodQuestion = pipWriteFinalDecisionPreparingFoodQuestion;
-    }
-
-    public String getPipWriteFinalDecisionTakingNutritionQuestion() {
-        return pipWriteFinalDecisionTakingNutritionQuestion;
-    }
-
-    public void setPipWriteFinalDecisionTakingNutritionQuestion(String pipWriteFinalDecisionTakingNutritionQuestion) {
-        this.pipWriteFinalDecisionTakingNutritionQuestion = pipWriteFinalDecisionTakingNutritionQuestion;
-    }
-
-    public String getPipWriteFinalDecisionManagingTherapyQuestion() {
-        return pipWriteFinalDecisionManagingTherapyQuestion;
-    }
-
-    public void setPipWriteFinalDecisionManagingTherapyQuestion(String pipWriteFinalDecisionManagingTherapyQuestion) {
-        this.pipWriteFinalDecisionManagingTherapyQuestion = pipWriteFinalDecisionManagingTherapyQuestion;
-    }
-
-    public String getPipWriteFinalDecisionWashAndBatheQuestion() {
-        return pipWriteFinalDecisionWashAndBatheQuestion;
-    }
-
-    public void setPipWriteFinalDecisionWashAndBatheQuestion(String pipWriteFinalDecisionWashAndBatheQuestion) {
-        this.pipWriteFinalDecisionWashAndBatheQuestion = pipWriteFinalDecisionWashAndBatheQuestion;
-    }
-
-    public String getPipWriteFinalDecisionManagingToiletNeedsQuestion() {
-        return pipWriteFinalDecisionManagingToiletNeedsQuestion;
-    }
-
-    public void setPipWriteFinalDecisionManagingToiletNeedsQuestion(String pipWriteFinalDecisionManagingToiletNeedsQuestion) {
-        this.pipWriteFinalDecisionManagingToiletNeedsQuestion = pipWriteFinalDecisionManagingToiletNeedsQuestion;
-    }
-
-    public String getPipWriteFinalDecisionDressingAndUndressingQuestion() {
-        return pipWriteFinalDecisionDressingAndUndressingQuestion;
-    }
-
-    public void setPipWriteFinalDecisionDressingAndUndressingQuestion(String pipWriteFinalDecisionDressingAndUndressingQuestion) {
-        this.pipWriteFinalDecisionDressingAndUndressingQuestion = pipWriteFinalDecisionDressingAndUndressingQuestion;
-    }
-
-    public String getPipWriteFinalDecisionCommunicatingQuestion() {
-        return pipWriteFinalDecisionCommunicatingQuestion;
-    }
-
-    public void setPipWriteFinalDecisionCommunicatingQuestion(String pipWriteFinalDecisionCommunicatingQuestion) {
-        this.pipWriteFinalDecisionCommunicatingQuestion = pipWriteFinalDecisionCommunicatingQuestion;
-    }
-
-    public String getPipWriteFinalDecisionReadingUnderstandingQuestion() {
-        return pipWriteFinalDecisionReadingUnderstandingQuestion;
-    }
-
-    public void setPipWriteFinalDecisionReadingUnderstandingQuestion(String pipWriteFinalDecisionReadingUnderstandingQuestion) {
-        this.pipWriteFinalDecisionReadingUnderstandingQuestion = pipWriteFinalDecisionReadingUnderstandingQuestion;
-    }
-
-    public String getPipWriteFinalDecisionEngagingWithOthersQuestion() {
-        return pipWriteFinalDecisionEngagingWithOthersQuestion;
-    }
-
-    public void setPipWriteFinalDecisionEngagingWithOthersQuestion(String pipWriteFinalDecisionEngagingWithOthersQuestion) {
-        this.pipWriteFinalDecisionEngagingWithOthersQuestion = pipWriteFinalDecisionEngagingWithOthersQuestion;
-    }
-
-    public String getPipWriteFinalDecisionBudgetingDecisionsQuestion() {
-        return pipWriteFinalDecisionBudgetingDecisionsQuestion;
-    }
-
-    public void setPipWriteFinalDecisionBudgetingDecisionsQuestion(String pipWriteFinalDecisionBudgetingDecisionsQuestion) {
-        this.pipWriteFinalDecisionBudgetingDecisionsQuestion = pipWriteFinalDecisionBudgetingDecisionsQuestion;
-    }
-
-    public String getPipWriteFinalDecisionPlanningAndFollowingQuestion() {
-        return pipWriteFinalDecisionPlanningAndFollowingQuestion;
-    }
-
-    public void setPipWriteFinalDecisionPlanningAndFollowingQuestion(String pipWriteFinalDecisionPlanningAndFollowingQuestion) {
-        this.pipWriteFinalDecisionPlanningAndFollowingQuestion = pipWriteFinalDecisionPlanningAndFollowingQuestion;
-    }
-
-    public String getPipWriteFinalDecisionMovingAroundQuestion() {
-        return pipWriteFinalDecisionMovingAroundQuestion;
-    }
-
-    public void setPipWriteFinalDecisionMovingAroundQuestion(String pipWriteFinalDecisionMovingAroundQuestion) {
-        this.pipWriteFinalDecisionMovingAroundQuestion = pipWriteFinalDecisionMovingAroundQuestion;
-    }
-
-    public String getWriteFinalDecisionPageSectionReference() {
-        return writeFinalDecisionPageSectionReference;
-    }
-
-    public void setWriteFinalDecisionPageSectionReference(String writeFinalDecisionPageSectionReference) {
-        this.writeFinalDecisionPageSectionReference = writeFinalDecisionPageSectionReference;
-    }
-
-    public String getWriteFinalDecisionAnythingElse() {
-        return writeFinalDecisionAnythingElse;
-    }
-
-    public void setWriteFinalDecisionAnythingElse(String writeFinalDecisionAnythingElse) {
-        this.writeFinalDecisionAnythingElse = writeFinalDecisionAnythingElse;
-    }
-
-    public DocumentLink getWriteFinalDecisionPreviewDocument() {
-        return writeFinalDecisionPreviewDocument;
-    }
-
-    public void setWriteFinalDecisionPreviewDocument(DocumentLink writeFinalDecisionPreviewDocument) {
-        this.writeFinalDecisionPreviewDocument = writeFinalDecisionPreviewDocument;
-    }
-
-    public String getWriteFinalDecisionGeneratedDate() {
-        return writeFinalDecisionGeneratedDate;
-    }
-
-    public void setWriteFinalDecisionGeneratedDate(String writeFinalDecisionGeneratedDate) {
-        this.writeFinalDecisionGeneratedDate = writeFinalDecisionGeneratedDate;
-    }
-
-    public String getAdjournCaseGenerateNotice() {
-        return adjournCaseGenerateNotice;
-    }
-
-    public void setAdjournCaseGenerateNotice(String adjournCaseGenerateNotice) {
-        this.adjournCaseGenerateNotice = adjournCaseGenerateNotice;
-    }
-
-    public String getAdjournCaseTypeOfHearing() {
-        return adjournCaseTypeOfHearing;
-    }
-
-    public void setAdjournCaseTypeOfHearing(String adjournCaseTypeOfHearing) {
-        this.adjournCaseTypeOfHearing = adjournCaseTypeOfHearing;
-    }
-
-    public String getAdjournCaseCanCaseBeListedRightAway() {
-        return adjournCaseCanCaseBeListedRightAway;
-    }
-
-    public void setAdjournCaseCanCaseBeListedRightAway(String adjournCaseCanCaseBeListedRightAway) {
-        this.adjournCaseCanCaseBeListedRightAway = adjournCaseCanCaseBeListedRightAway;
-    }
-
-    public String getAdjournCaseAreDirectionsBeingMadeToParties() {
-        return adjournCaseAreDirectionsBeingMadeToParties;
-    }
-
-    public void setAdjournCaseAreDirectionsBeingMadeToParties(String adjournCaseAreDirectionsBeingMadeToParties) {
-        this.adjournCaseAreDirectionsBeingMadeToParties = adjournCaseAreDirectionsBeingMadeToParties;
-    }
-
-    public String getAdjournCaseDirectionsDueDateDaysOffset() {
-        return adjournCaseDirectionsDueDateDaysOffset;
-    }
-
-    public void setAdjournCaseDirectionsDueDateDaysOffset(String adjournCaseDirectionsDueDateDaysOffset) {
-        this.adjournCaseDirectionsDueDateDaysOffset = adjournCaseDirectionsDueDateDaysOffset;
-    }
-
-    public String getAdjournCaseDirectionsDueDate() {
-        return adjournCaseDirectionsDueDate;
-    }
-
-    public void setAdjournCaseDirectionsDueDate(String adjournCaseDirectionsDueDate) {
-        this.adjournCaseDirectionsDueDate = adjournCaseDirectionsDueDate;
-    }
-
-    public String getAdjournCaseTypeOfNextHearing() {
-        return adjournCaseTypeOfNextHearing;
-    }
-
-    public void setAdjournCaseTypeOfNextHearing(String adjournCaseTypeOfNextHearing) {
-        this.adjournCaseTypeOfNextHearing = adjournCaseTypeOfNextHearing;
-    }
-
-    public String getAdjournCaseNextHearingVenue() {
-        return adjournCaseNextHearingVenue;
-    }
-
-    public void setAdjournCaseNextHearingVenue(String adjournCaseNextHearingVenue) {
-        this.adjournCaseNextHearingVenue = adjournCaseNextHearingVenue;
-    }
-
-    public DynamicList getAdjournCaseNextHearingVenueSelected() {
-        return adjournCaseNextHearingVenueSelected;
-    }
-
-    public void setAdjournCaseNextHearingVenueSelected(DynamicList adjournCaseNextHearingVenueSelected) {
-        this.adjournCaseNextHearingVenueSelected = adjournCaseNextHearingVenueSelected;
-    }
-
-    public String getAdjournCasePanelMembersExcluded() {
-        return adjournCasePanelMembersExcluded;
-    }
-
-    public void setAdjournCasePanelMembersExcluded(String adjournCasePanelMembersExcluded) {
-        this.adjournCasePanelMembersExcluded = adjournCasePanelMembersExcluded;
-    }
-
-    public String getAdjournCaseDisabilityQualifiedPanelMemberName() {
-        return adjournCaseDisabilityQualifiedPanelMemberName;
-    }
-
-    public void setAdjournCaseDisabilityQualifiedPanelMemberName(String adjournCaseDisabilityQualifiedPanelMemberName) {
-        this.adjournCaseDisabilityQualifiedPanelMemberName = adjournCaseDisabilityQualifiedPanelMemberName;
-    }
-
-    public String getAdjournCaseMedicallyQualifiedPanelMemberName() {
-        return adjournCaseMedicallyQualifiedPanelMemberName;
-    }
-
-    public void setAdjournCaseMedicallyQualifiedPanelMemberName(String adjournCaseMedicallyQualifiedPanelMemberName) {
-        this.adjournCaseMedicallyQualifiedPanelMemberName = adjournCaseMedicallyQualifiedPanelMemberName;
-    }
-
-    public String getAdjournCaseOtherPanelMemberName() {
-        return adjournCaseOtherPanelMemberName;
-    }
-
-    public void setAdjournCaseOtherPanelMemberName(String adjournCaseOtherPanelMemberName) {
-        this.adjournCaseOtherPanelMemberName = adjournCaseOtherPanelMemberName;
-    }
-
-    public String getAdjournCaseNextHearingListingDurationType() {
-        return adjournCaseNextHearingListingDurationType;
-    }
-
-    public void setAdjournCaseNextHearingListingDurationType(String adjournCaseNextHearingListingDurationType) {
-        this.adjournCaseNextHearingListingDurationType = adjournCaseNextHearingListingDurationType;
-    }
-
-    public String getAdjournCaseNextHearingListingDuration() {
-        return adjournCaseNextHearingListingDuration;
-    }
-
-    public void setAdjournCaseNextHearingListingDuration(String adjournCaseNextHearingListingDuration) {
-        this.adjournCaseNextHearingListingDuration = adjournCaseNextHearingListingDuration;
-    }
-
-    public String getAdjournCaseNextHearingListingDurationUnits() {
-        return adjournCaseNextHearingListingDurationUnits;
-    }
-
-    public void setAdjournCaseNextHearingListingDurationUnits(String adjournCaseNextHearingListingDurationUnits) {
-        this.adjournCaseNextHearingListingDurationUnits = adjournCaseNextHearingListingDurationUnits;
-    }
-
-    public String getAdjournCaseInterpreterRequired() {
-        return adjournCaseInterpreterRequired;
-    }
-
-    public void setAdjournCaseInterpreterRequired(String adjournCaseInterpreterRequired) {
-        this.adjournCaseInterpreterRequired = adjournCaseInterpreterRequired;
-    }
-
-    public String getAdjournCaseInterpreterLanguage() {
-        return adjournCaseInterpreterLanguage;
-    }
-
-    public void setAdjournCaseInterpreterLanguage(String adjournCaseInterpreterLanguage) {
-        this.adjournCaseInterpreterLanguage = adjournCaseInterpreterLanguage;
-    }
-
-    public String getAdjournCaseNextHearingDateType() {
-        return adjournCaseNextHearingDateType;
-    }
-
-    public void setAdjournCaseNextHearingDateType(String adjournCaseNextHearingDateType) {
-        this.adjournCaseNextHearingDateType = adjournCaseNextHearingDateType;
-    }
-
-    public String getAdjournCaseNextHearingDateOrPeriod() {
-        return adjournCaseNextHearingDateOrPeriod;
-    }
-
-    public void setAdjournCaseNextHearingDateOrPeriod(String adjournCaseNextHearingDateOrPeriod) {
-        this.adjournCaseNextHearingDateOrPeriod = adjournCaseNextHearingDateOrPeriod;
-    }
-
-    public String getAdjournCaseNextHearingDateOrTime() {
-        return adjournCaseNextHearingDateOrTime;
-    }
-
-    public void setAdjournCaseNextHearingDateOrTime(String adjournCaseNextHearingDateOrTime) {
-        this.adjournCaseNextHearingDateOrTime = adjournCaseNextHearingDateOrTime;
-    }
-
-    public String getAdjournCaseNextHearingFirstAvailableDateAfterDate() {
-        return adjournCaseNextHearingFirstAvailableDateAfterDate;
-    }
-
-    public void setAdjournCaseNextHearingFirstAvailableDateAfterDate(String adjournCaseNextHearingFirstAvailableDateAfterDate) {
-        this.adjournCaseNextHearingFirstAvailableDateAfterDate = adjournCaseNextHearingFirstAvailableDateAfterDate;
-    }
-
-    public String getAdjournCaseNextHearingFirstAvailableDateAfterPeriod() {
-        return adjournCaseNextHearingFirstAvailableDateAfterPeriod;
-    }
-
-    public void setAdjournCaseNextHearingFirstAvailableDateAfterPeriod(String adjournCaseNextHearingFirstAvailableDateAfterPeriod) {
-        this.adjournCaseNextHearingFirstAvailableDateAfterPeriod = adjournCaseNextHearingFirstAvailableDateAfterPeriod;
-    }
-
-    public AdjournCaseTime getAdjournCaseTime() {
-        return adjournCaseTime;
-    }
-
-    public void setAdjournCaseTime(AdjournCaseTime adjournCaseTime) {
-        this.adjournCaseTime = adjournCaseTime;
-    }
-
-    public List<CollectionItem<String>> getAdjournCaseReasons() {
-        return adjournCaseReasons;
-    }
-
-    public void setAdjournCaseReasons(List<CollectionItem<String>> adjournCaseReasons) {
-        this.adjournCaseReasons = adjournCaseReasons;
-    }
-
-    public List<CollectionItem<String>> getAdjournCaseAdditionalDirections() {
-        return adjournCaseAdditionalDirections;
-    }
-
-    public void setAdjournCaseAdditionalDirections(List<CollectionItem<String>> adjournCaseAdditionalDirections) {
-        this.adjournCaseAdditionalDirections = adjournCaseAdditionalDirections;
-    }
-
-    public DocumentLink getAdjournCasePreviewDocument() {
-        return adjournCasePreviewDocument;
-    }
-
-    public void setAdjournCasePreviewDocument(DocumentLink adjournCasePreviewDocument) {
-        this.adjournCasePreviewDocument = adjournCasePreviewDocument;
-    }
-
-    public String getAdjournCaseGeneratedDate() {
-        return adjournCaseGeneratedDate;
-    }
-
-    public void setAdjournCaseGeneratedDate(String adjournCaseGeneratedDate) {
-        this.adjournCaseGeneratedDate = adjournCaseGeneratedDate;
-    }
-
-    public String getNotListableProvideReasons() {
-        return notListableProvideReasons;
-    }
-
-    public void setNotListableProvideReasons(String notListableProvideReasons) {
-        this.notListableProvideReasons = notListableProvideReasons;
-    }
-
-    public String getNotListableDueDate() {
-        return notListableDueDate;
-    }
-
-    public void setNotListableDueDate(String notListableDueDate) {
-        this.notListableDueDate = notListableDueDate;
-    }
-
-    public String getUpdateNotListableDirectionsFulfilled() {
-        return updateNotListableDirectionsFulfilled;
-    }
-
-    public void setUpdateNotListableDirectionsFulfilled(String updateNotListableDirectionsFulfilled) {
-        this.updateNotListableDirectionsFulfilled = updateNotListableDirectionsFulfilled;
-    }
-
-    public String getUpdateNotListableInterlocReview() {
-        return updateNotListableInterlocReview;
-    }
-
-    public void setUpdateNotListableInterlocReview(String updateNotListableInterlocReview) {
-        this.updateNotListableInterlocReview = updateNotListableInterlocReview;
-    }
-
-    public String getUpdateNotListableWhoReviewsCase() {
-        return updateNotListableWhoReviewsCase;
-    }
-
-    public void setUpdateNotListableWhoReviewsCase(String updateNotListableWhoReviewsCase) {
-        this.updateNotListableWhoReviewsCase = updateNotListableWhoReviewsCase;
-    }
-
-    public String getUpdateNotListableSetNewDueDate() {
-        return updateNotListableSetNewDueDate;
-    }
-
-    public void setUpdateNotListableSetNewDueDate(String updateNotListableSetNewDueDate) {
-        this.updateNotListableSetNewDueDate = updateNotListableSetNewDueDate;
-    }
-
-    public String getUpdateNotListableDueDate() {
-        return updateNotListableDueDate;
-    }
-
-    public void setUpdateNotListableDueDate(String updateNotListableDueDate) {
-        this.updateNotListableDueDate = updateNotListableDueDate;
-    }
-
-    public String getUpdateNotListableWhereShouldCaseMoveTo() {
-        return updateNotListableWhereShouldCaseMoveTo;
-    }
-
-    public void setUpdateNotListableWhereShouldCaseMoveTo(String updateNotListableWhereShouldCaseMoveTo) {
-        this.updateNotListableWhereShouldCaseMoveTo = updateNotListableWhereShouldCaseMoveTo;
-    }
-
-    public String getLanguagePreferenceWelsh() {
-        return languagePreferenceWelsh;
-    }
-
-    public void setLanguagePreferenceWelsh(String languagePreferenceWelsh) {
-        this.languagePreferenceWelsh = languagePreferenceWelsh;
-    }
-
-    public List<String> getElementsDisputedList() {
-        return elementsDisputedList;
-    }
-
-    public void setElementsDisputedList(List<String> elementsDisputedList) {
-        this.elementsDisputedList = elementsDisputedList;
-    }
-
-    public List<ElementDisputed> getElementsDisputedGeneral() {
-        return elementsDisputedGeneral;
-    }
-
-    public void setElementsDisputedGeneral(List<ElementDisputed> elementsDisputedGeneral) {
-        this.elementsDisputedGeneral = elementsDisputedGeneral;
-    }
-
-    public List<ElementDisputed> getElementsDisputedSanctions() {
-        return elementsDisputedSanctions;
-    }
-
-    public void setElementsDisputedSanctions(List<ElementDisputed> elementsDisputedSanctions) {
-        this.elementsDisputedSanctions = elementsDisputedSanctions;
-    }
-
-    public List<ElementDisputed> getElementsDisputedOverpayment() {
-        return elementsDisputedOverpayment;
-    }
-
-    public void setElementsDisputedOverpayment(List<ElementDisputed> elementsDisputedOverpayment) {
-        this.elementsDisputedOverpayment = elementsDisputedOverpayment;
-    }
-
-    public List<ElementDisputed> getElementsDisputedHousing() {
-        return elementsDisputedHousing;
-    }
-
-    public void setElementsDisputedHousing(List<ElementDisputed> elementsDisputedHousing) {
-        this.elementsDisputedHousing = elementsDisputedHousing;
-    }
-
-    public List<ElementDisputed> getElementsDisputedChildCare() {
-        return elementsDisputedChildCare;
-    }
-
-    public void setElementsDisputedChildCare(List<ElementDisputed> elementsDisputedChildCare) {
-        this.elementsDisputedChildCare = elementsDisputedChildCare;
-    }
-
-    public List<ElementDisputed> getElementsDisputedCare() {
-        return elementsDisputedCare;
-    }
-
-    public void setElementsDisputedCare(List<ElementDisputed> elementsDisputedCare) {
-        this.elementsDisputedCare = elementsDisputedCare;
-    }
-
-    public List<ElementDisputed> getElementsDisputedChildElement() {
-        return elementsDisputedChildElement;
-    }
-
-    public void setElementsDisputedChildElement(List<ElementDisputed> elementsDisputedChildElement) {
-        this.elementsDisputedChildElement = elementsDisputedChildElement;
-    }
-
-    public List<ElementDisputed> getElementsDisputedChildDisabled() {
-        return elementsDisputedChildDisabled;
-    }
-
-    public void setElementsDisputedChildDisabled(List<ElementDisputed> elementsDisputedChildDisabled) {
-        this.elementsDisputedChildDisabled = elementsDisputedChildDisabled;
-    }
-
-    public String getElementsDisputedIsDecisionDisputedByOthers() {
-        return elementsDisputedIsDecisionDisputedByOthers;
-    }
-
-    public void setElementsDisputedIsDecisionDisputedByOthers(String elementsDisputedIsDecisionDisputedByOthers) {
-        this.elementsDisputedIsDecisionDisputedByOthers = elementsDisputedIsDecisionDisputedByOthers;
-    }
-
-    public String getElementsDisputedLinkedAppealRef() {
-        return elementsDisputedLinkedAppealRef;
-    }
-
-    public void setElementsDisputedLinkedAppealRef(String elementsDisputedLinkedAppealRef) {
-        this.elementsDisputedLinkedAppealRef = elementsDisputedLinkedAppealRef;
-    }
-
-    public String getJointParty() {
-        return jointParty;
-    }
-
-    public void setJointParty(String jointParty) {
-        this.jointParty = jointParty;
-    }
-
-    public JointPartyName getJointPartyName() {
-        return jointPartyName;
-    }
-
-    public void setJointPartyName(JointPartyName jointPartyName) {
-        this.jointPartyName = jointPartyName;
-    }
-
-    public Identity getJointPartyIdentity() {
-        return jointPartyIdentity;
-    }
-
-    public void setJointPartyIdentity(Identity jointPartyIdentity) {
-        this.jointPartyIdentity = jointPartyIdentity;
-    }
-
-    public String getJointPartyAddressSameAsAppellant() {
-        return jointPartyAddressSameAsAppellant;
-    }
-
-    public void setJointPartyAddressSameAsAppellant(String jointPartyAddressSameAsAppellant) {
-        this.jointPartyAddressSameAsAppellant = jointPartyAddressSameAsAppellant;
-    }
-
-    public Address getJointPartyAddress() {
-        return jointPartyAddress;
-    }
-
-    public void setJointPartyAddress(Address jointPartyAddress) {
-        this.jointPartyAddress = jointPartyAddress;
-    }
-
-    public String getTranslationWorkOutstanding() {
-        return translationWorkOutstanding;
-    }
-
-    public void setTranslationWorkOutstanding(String translationWorkOutstanding) {
-        this.translationWorkOutstanding = translationWorkOutstanding;
-    }
-
-    public List<SscsWelshDocument> getSscsWelshDocuments() {
-        return sscsWelshDocuments;
-    }
-
-    public void setSscsWelshDocuments(List<SscsWelshDocument> sscsWelshDocuments) {
-        this.sscsWelshDocuments = sscsWelshDocuments;
-    }
-
-    public List<SscsWelshDocument> getSscsWelshPreviewDocuments() {
-        return sscsWelshPreviewDocuments;
-    }
-
-    public void setSscsWelshPreviewDocuments(List<SscsWelshDocument> sscsWelshPreviewDocuments) {
-        this.sscsWelshPreviewDocuments = sscsWelshPreviewDocuments;
-    }
-
-    public String getSscsWelshPreviewNextEvent() {
-        return sscsWelshPreviewNextEvent;
-    }
-
-    public void setSscsWelshPreviewNextEvent(String sscsWelshPreviewNextEvent) {
-        this.sscsWelshPreviewNextEvent = sscsWelshPreviewNextEvent;
-    }
-
-    public DynamicList getOriginalDocuments() {
-        return originalDocuments;
-    }
-
-    public void setOriginalDocuments(DynamicList originalDocuments) {
-        this.originalDocuments = originalDocuments;
-    }
-
-    public DynamicList getOriginalNoticeDocuments() {
-        return originalNoticeDocuments;
-    }
-
-    public void setOriginalNoticeDocuments(DynamicList originalNoticeDocuments) {
-        this.originalNoticeDocuments = originalNoticeDocuments;
-    }
-
-    public DynamicList getDocumentTypes() {
-        return documentTypes;
-    }
-
-    public void setDocumentTypes(DynamicList documentTypes) {
-        this.documentTypes = documentTypes;
-    }
-
-    public String getWelshBodyContent() {
-        return welshBodyContent;
-    }
-
-    public void setWelshBodyContent(String welshBodyContent) {
-        this.welshBodyContent = welshBodyContent;
-    }
-
-    public String getEnglishBodyContent() {
-        return englishBodyContent;
-    }
-
-    public void setEnglishBodyContent(String englishBodyContent) {
-        this.englishBodyContent = englishBodyContent;
-    }
-
-    public String getIsScottishCase() {
-        return isScottishCase;
-    }
-
-    public void setIsScottishCase(String isScottishCase) {
-        this.isScottishCase = isScottishCase;
-    }
-
-    public LocalDate getReinstatementRegistered() {
-        return reinstatementRegistered;
-    }
-
-    public void setReinstatementRegistered(LocalDate reinstatementRegistered) {
-        this.reinstatementRegistered = reinstatementRegistered;
-    }
-
-    public RequestOutcome getReinstatementOutcome() {
-        return reinstatementOutcome;
-    }
-
-    public void setReinstatementOutcome(RequestOutcome reinstatementOutcome) {
-        this.reinstatementOutcome = reinstatementOutcome;
-    }
-
-    public String getWelshInterlocNextReviewState() {
-        return welshInterlocNextReviewState;
-    }
-
-    public void setWelshInterlocNextReviewState(String welshInterlocNextReviewState) {
-        this.welshInterlocNextReviewState = welshInterlocNextReviewState;
-    }
-
-    public DatedRequestOutcome getConfidentialityRequestOutcomeAppellant() {
-        return confidentialityRequestOutcomeAppellant;
-    }
-
-    public void setConfidentialityRequestOutcomeAppellant(DatedRequestOutcome confidentialityRequestOutcomeAppellant) {
-        this.confidentialityRequestOutcomeAppellant = confidentialityRequestOutcomeAppellant;
-    }
-
-    public DatedRequestOutcome getConfidentialityRequestOutcomeJointParty() {
-        return confidentialityRequestOutcomeJointParty;
-    }
-
-    public void setConfidentialityRequestOutcomeJointParty(DatedRequestOutcome confidentialityRequestOutcomeJointParty) {
-        this.confidentialityRequestOutcomeJointParty = confidentialityRequestOutcomeJointParty;
-    }
-
-    public String getConfidentialityRequestAppellantGrantedOrRefused() {
-        return confidentialityRequestAppellantGrantedOrRefused;
-    }
-
-    public void setConfidentialityRequestAppellantGrantedOrRefused(String confidentialityRequestAppellantGrantedOrRefused) {
-        this.confidentialityRequestAppellantGrantedOrRefused = confidentialityRequestAppellantGrantedOrRefused;
-    }
-
-    public String getConfidentialityRequestJointPartyGrantedOrRefused() {
-        return confidentialityRequestJointPartyGrantedOrRefused;
-    }
-
-    public void setConfidentialityRequestJointPartyGrantedOrRefused(String confidentialityRequestJointPartyGrantedOrRefused) {
-        this.confidentialityRequestJointPartyGrantedOrRefused = confidentialityRequestJointPartyGrantedOrRefused;
-    }
-
-    public FormType getFormType() {
-        return formType;
-    }
-
-    public void setFormType(FormType formType) {
-        this.formType = formType;
-    }
-
-    public String getIsProgressingViaGaps() {
-        return isProgressingViaGaps;
-    }
-
-    public void setIsProgressingViaGaps(String isProgressingViaGaps) {
-        this.isProgressingViaGaps = isProgressingViaGaps;
-    }
-
-    public String getWcaAppeal() {
-        return wcaAppeal;
-    }
-
-    public void setWcaAppeal(String wcaAppeal) {
-        this.wcaAppeal = wcaAppeal;
-    }
-
-    public String getSupportGroupOnlyAppeal() {
-        return supportGroupOnlyAppeal;
-    }
-
-    public void setSupportGroupOnlyAppeal(String supportGroupOnlyAppeal) {
-        this.supportGroupOnlyAppeal = supportGroupOnlyAppeal;
-    }
-
-    public List<String> getEsaWriteFinalDecisionPhysicalDisabilitiesQuestion() {
-        return esaWriteFinalDecisionPhysicalDisabilitiesQuestion;
-    }
-
-    public void setEsaWriteFinalDecisionPhysicalDisabilitiesQuestion(List<String> esaWriteFinalDecisionPhysicalDisabilitiesQuestion) {
-        this.esaWriteFinalDecisionPhysicalDisabilitiesQuestion = esaWriteFinalDecisionPhysicalDisabilitiesQuestion;
-    }
-
-    public List<String> getEsaWriteFinalDecisionMentalAssessmentQuestion() {
-        return esaWriteFinalDecisionMentalAssessmentQuestion;
-    }
-
-    public void setEsaWriteFinalDecisionMentalAssessmentQuestion(List<String> esaWriteFinalDecisionMentalAssessmentQuestion) {
-        this.esaWriteFinalDecisionMentalAssessmentQuestion = esaWriteFinalDecisionMentalAssessmentQuestion;
-    }
-
-    public String getEsaWriteFinalDecisionMobilisingUnaidedQuestion() {
-        return esaWriteFinalDecisionMobilisingUnaidedQuestion;
-    }
-
-    public void setEsaWriteFinalDecisionMobilisingUnaidedQuestion(String esaWriteFinalDecisionMobilisingUnaidedQuestion) {
-        this.esaWriteFinalDecisionMobilisingUnaidedQuestion = esaWriteFinalDecisionMobilisingUnaidedQuestion;
-    }
-
-    public String getEsaWriteFinalDecisionStandingAndSittingQuestion() {
-        return esaWriteFinalDecisionStandingAndSittingQuestion;
-    }
-
-    public void setEsaWriteFinalDecisionStandingAndSittingQuestion(String esaWriteFinalDecisionStandingAndSittingQuestion) {
-        this.esaWriteFinalDecisionStandingAndSittingQuestion = esaWriteFinalDecisionStandingAndSittingQuestion;
-    }
-
-    public String getEsaWriteFinalDecisionReachingQuestion() {
-        return esaWriteFinalDecisionReachingQuestion;
-    }
-
-    public void setEsaWriteFinalDecisionReachingQuestion(String esaWriteFinalDecisionReachingQuestion) {
-        this.esaWriteFinalDecisionReachingQuestion = esaWriteFinalDecisionReachingQuestion;
-    }
-
-    public String getEsaWriteFinalDecisionPickingUpQuestion() {
-        return esaWriteFinalDecisionPickingUpQuestion;
-    }
-
-    public void setEsaWriteFinalDecisionPickingUpQuestion(String esaWriteFinalDecisionPickingUpQuestion) {
-        this.esaWriteFinalDecisionPickingUpQuestion = esaWriteFinalDecisionPickingUpQuestion;
-    }
-
-    public String getEsaWriteFinalDecisionManualDexterityQuestion() {
-        return esaWriteFinalDecisionManualDexterityQuestion;
-    }
-
-    public void setEsaWriteFinalDecisionManualDexterityQuestion(String esaWriteFinalDecisionManualDexterityQuestion) {
-        this.esaWriteFinalDecisionManualDexterityQuestion = esaWriteFinalDecisionManualDexterityQuestion;
-    }
-
-    public String getEsaWriteFinalDecisionMakingSelfUnderstoodQuestion() {
-        return esaWriteFinalDecisionMakingSelfUnderstoodQuestion;
-    }
-
-    public void setEsaWriteFinalDecisionMakingSelfUnderstoodQuestion(String esaWriteFinalDecisionMakingSelfUnderstoodQuestion) {
-        this.esaWriteFinalDecisionMakingSelfUnderstoodQuestion = esaWriteFinalDecisionMakingSelfUnderstoodQuestion;
-    }
-
-    public String getEsaWriteFinalDecisionCommunicationQuestion() {
-        return esaWriteFinalDecisionCommunicationQuestion;
-    }
-
-    public void setEsaWriteFinalDecisionCommunicationQuestion(String esaWriteFinalDecisionCommunicationQuestion) {
-        this.esaWriteFinalDecisionCommunicationQuestion = esaWriteFinalDecisionCommunicationQuestion;
-    }
-
-    public String getEsaWriteFinalDecisionNavigationQuestion() {
-        return esaWriteFinalDecisionNavigationQuestion;
-    }
-
-    public void setEsaWriteFinalDecisionNavigationQuestion(String esaWriteFinalDecisionNavigationQuestion) {
-        this.esaWriteFinalDecisionNavigationQuestion = esaWriteFinalDecisionNavigationQuestion;
-    }
-
-    public String getEsaWriteFinalDecisionLossOfControlQuestion() {
-        return esaWriteFinalDecisionLossOfControlQuestion;
-    }
-
-    public void setEsaWriteFinalDecisionLossOfControlQuestion(String esaWriteFinalDecisionLossOfControlQuestion) {
-        this.esaWriteFinalDecisionLossOfControlQuestion = esaWriteFinalDecisionLossOfControlQuestion;
-    }
-
-    public String getEsaWriteFinalDecisionConsciousnessQuestion() {
-        return esaWriteFinalDecisionConsciousnessQuestion;
-    }
-
-    public void setEsaWriteFinalDecisionConsciousnessQuestion(String esaWriteFinalDecisionConsciousnessQuestion) {
-        this.esaWriteFinalDecisionConsciousnessQuestion = esaWriteFinalDecisionConsciousnessQuestion;
-    }
-
-    public String getEsaWriteFinalDecisionLearningTasksQuestion() {
-        return esaWriteFinalDecisionLearningTasksQuestion;
-    }
-
-    public void setEsaWriteFinalDecisionLearningTasksQuestion(String esaWriteFinalDecisionLearningTasksQuestion) {
-        this.esaWriteFinalDecisionLearningTasksQuestion = esaWriteFinalDecisionLearningTasksQuestion;
-    }
-
-    public String getEsaWriteFinalDecisionAwarenessOfHazardsQuestion() {
-        return esaWriteFinalDecisionAwarenessOfHazardsQuestion;
-    }
-
-    public void setEsaWriteFinalDecisionAwarenessOfHazardsQuestion(String esaWriteFinalDecisionAwarenessOfHazardsQuestion) {
-        this.esaWriteFinalDecisionAwarenessOfHazardsQuestion = esaWriteFinalDecisionAwarenessOfHazardsQuestion;
-    }
-
-    public String getEsaWriteFinalDecisionPersonalActionQuestion() {
-        return esaWriteFinalDecisionPersonalActionQuestion;
-    }
-
-    public void setEsaWriteFinalDecisionPersonalActionQuestion(String esaWriteFinalDecisionPersonalActionQuestion) {
-        this.esaWriteFinalDecisionPersonalActionQuestion = esaWriteFinalDecisionPersonalActionQuestion;
-    }
-
-    public String getEsaWriteFinalDecisionCopingWithChangeQuestion() {
-        return esaWriteFinalDecisionCopingWithChangeQuestion;
-    }
-
-    public void setEsaWriteFinalDecisionCopingWithChangeQuestion(String esaWriteFinalDecisionCopingWithChangeQuestion) {
-        this.esaWriteFinalDecisionCopingWithChangeQuestion = esaWriteFinalDecisionCopingWithChangeQuestion;
-    }
-
-    public String getEsaWriteFinalDecisionGettingAboutQuestion() {
-        return esaWriteFinalDecisionGettingAboutQuestion;
-    }
-
-    public void setEsaWriteFinalDecisionGettingAboutQuestion(String esaWriteFinalDecisionGettingAboutQuestion) {
-        this.esaWriteFinalDecisionGettingAboutQuestion = esaWriteFinalDecisionGettingAboutQuestion;
-    }
-
-    public String getEsaWriteFinalDecisionSocialEngagementQuestion() {
-        return esaWriteFinalDecisionSocialEngagementQuestion;
-    }
-
-    public void setEsaWriteFinalDecisionSocialEngagementQuestion(String esaWriteFinalDecisionSocialEngagementQuestion) {
-        this.esaWriteFinalDecisionSocialEngagementQuestion = esaWriteFinalDecisionSocialEngagementQuestion;
-    }
-
-    public String getEsaWriteFinalDecisionAppropriatenessOfBehaviourQuestion() {
-        return esaWriteFinalDecisionAppropriatenessOfBehaviourQuestion;
-    }
-
-    public void setEsaWriteFinalDecisionAppropriatenessOfBehaviourQuestion(String esaWriteFinalDecisionAppropriatenessOfBehaviourQuestion) {
-        this.esaWriteFinalDecisionAppropriatenessOfBehaviourQuestion = esaWriteFinalDecisionAppropriatenessOfBehaviourQuestion;
-    }
-
-    public YesNo getDoesRegulation29Apply() {
-        return doesRegulation29Apply;
-    }
-
-    public void setDoesRegulation29Apply(YesNo doesRegulation29Apply) {
-        this.doesRegulation29Apply = doesRegulation29Apply;
-    }
-
-    public YesNo getShowRegulation29Page() {
-        return showRegulation29Page;
-    }
-
-    public void setShowRegulation29Page(YesNo showRegulation29Page) {
-        this.showRegulation29Page = showRegulation29Page;
-    }
-
-    public YesNo getShowSchedule3ActivitiesPage() {
-        return showSchedule3ActivitiesPage;
-    }
-
-    public void setShowSchedule3ActivitiesPage(YesNo showSchedule3ActivitiesPage) {
-        this.showSchedule3ActivitiesPage = showSchedule3ActivitiesPage;
-    }
-
-    public String getEsaWriteFinalDecisionSchedule3ActivitiesApply() {
-        return esaWriteFinalDecisionSchedule3ActivitiesApply;
-    }
-
-    public void setEsaWriteFinalDecisionSchedule3ActivitiesApply(String esaWriteFinalDecisionSchedule3ActivitiesApply) {
-        this.esaWriteFinalDecisionSchedule3ActivitiesApply = esaWriteFinalDecisionSchedule3ActivitiesApply;
-    }
-
-    public List<String> getEsaWriteFinalDecisionSchedule3ActivitiesQuestion() {
-        return esaWriteFinalDecisionSchedule3ActivitiesQuestion;
-    }
-
-    public void setEsaWriteFinalDecisionSchedule3ActivitiesQuestion(List<String> esaWriteFinalDecisionSchedule3ActivitiesQuestion) {
-        this.esaWriteFinalDecisionSchedule3ActivitiesQuestion = esaWriteFinalDecisionSchedule3ActivitiesQuestion;
-    }
-
-    public YesNo getDoesRegulation35Apply() {
-        return doesRegulation35Apply;
-    }
-
-    public void setDoesRegulation35Apply(YesNo doesRegulation35Apply) {
-        this.doesRegulation35Apply = doesRegulation35Apply;
-    }
-
-    public YesNo getShowFinalDecisionNoticeSummaryOfOutcomePage() {
-        return showFinalDecisionNoticeSummaryOfOutcomePage;
-    }
-
-    public void setShowFinalDecisionNoticeSummaryOfOutcomePage(YesNo showFinalDecisionNoticeSummaryOfOutcomePage) {
-        this.showFinalDecisionNoticeSummaryOfOutcomePage = showFinalDecisionNoticeSummaryOfOutcomePage;
-    }
-
-    public String getTest1() {
-        return test1;
-    }
-
-    public void setTest1(String test1) {
-        this.test1 = test1;
-    }
-
-    public String getTest2() {
-        return test2;
-    }
-
-    public void setTest2(String test2) {
-        this.test2 = test2;
-    }
 
     public static class SscsCaseDataBuilder {
+
         private String ccdCaseId;
         private State state;
         private State previousState;
@@ -3318,7 +869,7 @@ public class SscsCaseData implements CaseData {
         }
 
         @JsonProperty(
-                access = JsonProperty.Access.WRITE_ONLY
+            access = JsonProperty.Access.WRITE_ONLY
         )
         public SscsCaseData.SscsCaseDataBuilder ccdCaseId(String ccdCaseId) {
             this.ccdCaseId = ccdCaseId;
@@ -4608,16 +2159,267 @@ public class SscsCaseData implements CaseData {
         }
 
         public SscsCaseData build() {
-            return new SscsCaseData(this.ccdCaseId, this.state, this.previousState, this.caseReference, this.caseCreated, this.infoRequests, this.region, this.appeal, this.hearings, this.evidence, this.dwpTimeExtension, this.events, this.subscriptions, this.regionalProcessingCenter, this.caseBundles, this.sscsDocument, this.draftSscsDocument, this.draftSscsFurtherEvidenceDocument, this.corDocument, this.draftCorDocument, this.sscsInterlocDecisionDocument, this.sscsInterlocDirectionDocument, this.sscsStrikeOutDocument, this.generatedNino, this.generatedSurname, this.generatedEmail, this.generatedMobile, this.generatedDob, this.directionResponse, this.evidencePresent, this.bulkScanCaseReference, this.decisionNotes, this.isCorDecision, this.relistingReason, this.dateSentToDwp, this.interlocReviewState, this.hmctsDwpState, this.dwpFurtherEvidenceStates, this.originalSender, this.furtherEvidenceAction, this.scannedDocuments, this.informationFromAppellant, this.outcome, this.evidenceHandled, this.assignedToJudge, this.assignedToDisabilityMember, this.assignedToMedicalMember, this.reissueFurtherEvidenceDocument, this.resendToAppellant, this.resendToRepresentative, this.resendToDwp, this.caseCode, this.benefitCode, this.issueCode, this.dwpOriginatingOffice, this.dwpPresentingOffice, this.dwpIsOfficerAttending, this.dwpUcb, this.dwpPhme, this.dwpComplexAppeal, this.dwpFurtherInfo, this.correspondence, this.interlocReferralDate, this.interlocReferralReason, this.dwpRegionalCentre, this.generateNotice, this.previewDocument, this.bodyContent, this.signedBy, this.signedRole, this.dateAdded, this.historicSscsInterlocDirectionDocs, this.dwpState, this.appealNotePad, this.dwpStateFeNoAction, this.createdInGapsFrom, this.dateCaseSentToGaps, this.associatedCase, this.dwpAT38Document, this.dwpEvidenceBundleDocument, this.dwpResponseDocument, this.dwpSupplementaryResponseDoc, this.dwpOtherDoc, this.dwpLT203, this.dwpLapseLetter, this.dwpResponseDate, this.linkedCasesBoolean, this.decisionType, this.selectWhoReviewsCase, this.directionType, this.directionTypeDl, this.extensionNextEvent, this.extensionNextEventDl, this.tl1Form, this.isInterlocRequired, this.panel, this.evidenceReceived, this.urgentCase, this.urgentHearingRegistered, this.urgentHearingOutcome, this.documentSentToDwp, this.directionDueDate, this.reservedToJudge, this.linkedCase, this.isWaiverNeeded, this.waiverDeclaration, this.waiverReason, this.waiverReasonOther, this.clerkDelegatedAuthority, this.clerkAppealSatisfactionText, this.pipWriteFinalDecisionDailyLivingActivitiesQuestion, this.pipWriteFinalDecisionMobilityActivitiesQuestion, this.clerkConfirmationOfMrn, this.clerkOtherReason, this.clerkConfirmationOther, this.responseRequired, this.timeExtensionRequested, this.bundleConfiguration, this.pcqId, this.writeFinalDecisionIsDescriptorFlow, this.writeFinalDecisionGenerateNotice, this.writeFinalDecisionAllowedOrRefused, this.writeFinalDecisionTypeOfHearing, this.writeFinalDecisionPresentingOfficerAttendedQuestion, this.writeFinalDecisionAppellantAttendedQuestion, this.pipWriteFinalDecisionDailyLivingQuestion, this.pipWriteFinalDecisionComparedToDwpDailyLivingQuestion, this.pipWriteFinalDecisionMobilityQuestion, this.pipWriteFinalDecisionComparedToDwpMobilityQuestion, this.writeFinalDecisionStartDate, this.writeFinalDecisionEndDateType, this.writeFinalDecisionEndDate, this.writeFinalDecisionDisabilityQualifiedPanelMemberName, this.writeFinalDecisionMedicallyQualifiedPanelMemberName, this.writeFinalDecisionOtherPanelMemberName, this.writeFinalDecisionDateOfDecision, this.writeFinalDecisionDetailsOfDecision, this.writeFinalDecisionReasons, this.pipWriteFinalDecisionPreparingFoodQuestion, this.pipWriteFinalDecisionTakingNutritionQuestion, this.pipWriteFinalDecisionManagingTherapyQuestion, this.pipWriteFinalDecisionWashAndBatheQuestion, this.pipWriteFinalDecisionManagingToiletNeedsQuestion, this.pipWriteFinalDecisionDressingAndUndressingQuestion, this.pipWriteFinalDecisionCommunicatingQuestion, this.pipWriteFinalDecisionReadingUnderstandingQuestion, this.pipWriteFinalDecisionEngagingWithOthersQuestion, this.pipWriteFinalDecisionBudgetingDecisionsQuestion, this.pipWriteFinalDecisionPlanningAndFollowingQuestion, this.pipWriteFinalDecisionMovingAroundQuestion, this.writeFinalDecisionPageSectionReference, this.writeFinalDecisionAnythingElse, this.writeFinalDecisionPreviewDocument, this.writeFinalDecisionGeneratedDate, this.adjournCaseGenerateNotice, this.adjournCaseTypeOfHearing, this.adjournCaseCanCaseBeListedRightAway, this.adjournCaseAreDirectionsBeingMadeToParties, this.adjournCaseDirectionsDueDateDaysOffset, this.adjournCaseDirectionsDueDate, this.adjournCaseTypeOfNextHearing, this.adjournCaseNextHearingVenue, this.adjournCaseNextHearingVenueSelected, this.adjournCasePanelMembersExcluded, this.adjournCaseDisabilityQualifiedPanelMemberName, this.adjournCaseMedicallyQualifiedPanelMemberName, this.adjournCaseOtherPanelMemberName, this.adjournCaseNextHearingListingDurationType, this.adjournCaseNextHearingListingDuration, this.adjournCaseNextHearingListingDurationUnits, this.adjournCaseInterpreterRequired, this.adjournCaseInterpreterLanguage, this.adjournCaseNextHearingDateType, this.adjournCaseNextHearingDateOrPeriod, this.adjournCaseNextHearingDateOrTime, this.adjournCaseNextHearingFirstAvailableDateAfterDate, this.adjournCaseNextHearingFirstAvailableDateAfterPeriod, this.adjournCaseTime, this.adjournCaseReasons, this.adjournCaseAdditionalDirections, this.adjournCasePreviewDocument, this.adjournCaseGeneratedDate, this.notListableProvideReasons, this.notListableDueDate, this.updateNotListableDirectionsFulfilled, this.updateNotListableInterlocReview, this.updateNotListableWhoReviewsCase, this.updateNotListableSetNewDueDate, this.updateNotListableDueDate, this.updateNotListableWhereShouldCaseMoveTo, this.languagePreferenceWelsh, this.elementsDisputedList, this.elementsDisputedGeneral, this.elementsDisputedSanctions, this.elementsDisputedOverpayment, this.elementsDisputedHousing, this.elementsDisputedChildCare, this.elementsDisputedCare, this.elementsDisputedChildElement, this.elementsDisputedChildDisabled, this.elementsDisputedIsDecisionDisputedByOthers, this.elementsDisputedLinkedAppealRef, this.jointParty, this.jointPartyName, this.jointPartyIdentity, this.jointPartyAddressSameAsAppellant, this.jointPartyAddress, this.translationWorkOutstanding, this.sscsWelshDocuments, this.sscsWelshPreviewDocuments, this.sscsWelshPreviewNextEvent, this.originalDocuments, this.originalNoticeDocuments, this.documentTypes, this.welshBodyContent, this.englishBodyContent, this.isScottishCase, this.reinstatementRegistered, this.reinstatementOutcome, this.welshInterlocNextReviewState, this.confidentialityRequestOutcomeAppellant, this.confidentialityRequestOutcomeJointParty, this.confidentialityRequestAppellantGrantedOrRefused, this.confidentialityRequestJointPartyGrantedOrRefused, this.formType, this.isProgressingViaGaps, this.wcaAppeal, this.supportGroupOnlyAppeal, this.esaWriteFinalDecisionPhysicalDisabilitiesQuestion, this.esaWriteFinalDecisionMentalAssessmentQuestion, this.esaWriteFinalDecisionMobilisingUnaidedQuestion, this.esaWriteFinalDecisionStandingAndSittingQuestion, this.esaWriteFinalDecisionReachingQuestion, this.esaWriteFinalDecisionPickingUpQuestion, this.esaWriteFinalDecisionManualDexterityQuestion, this.esaWriteFinalDecisionMakingSelfUnderstoodQuestion, this.esaWriteFinalDecisionCommunicationQuestion, this.esaWriteFinalDecisionNavigationQuestion, this.esaWriteFinalDecisionLossOfControlQuestion, this.esaWriteFinalDecisionConsciousnessQuestion, this.esaWriteFinalDecisionLearningTasksQuestion, this.esaWriteFinalDecisionAwarenessOfHazardsQuestion, this.esaWriteFinalDecisionPersonalActionQuestion, this.esaWriteFinalDecisionCopingWithChangeQuestion, this.esaWriteFinalDecisionGettingAboutQuestion, this.esaWriteFinalDecisionSocialEngagementQuestion, this.esaWriteFinalDecisionAppropriatenessOfBehaviourQuestion, this.doesRegulation29Apply, this.showRegulation29Page, this.showSchedule3ActivitiesPage, this.esaWriteFinalDecisionSchedule3ActivitiesApply, this.esaWriteFinalDecisionSchedule3ActivitiesQuestion, this.doesRegulation35Apply, this.showFinalDecisionNoticeSummaryOfOutcomePage, this.test1, this.test2);
+            SscsCaseData caseData = new SscsCaseData();
+            caseData.ccdCaseId = this.ccdCaseId;
+            caseData.state = this.state;
+            caseData.previousState = this.previousState;
+            caseData.caseReference = this.caseReference;
+            caseData.caseCreated = this.caseCreated;
+            caseData.infoRequests = this.infoRequests;
+            caseData.region = this.region;
+            caseData.appeal = this.appeal;
+            caseData.hearings = this.hearings;
+            caseData.evidence = this.evidence;
+            caseData.dwpTimeExtension = this.dwpTimeExtension;
+            caseData.events = this.events;
+            caseData.subscriptions = this.subscriptions;
+            caseData.regionalProcessingCenter = this.regionalProcessingCenter;
+            caseData.caseBundles = this.caseBundles;
+            caseData.sscsDocument = this.sscsDocument;
+            caseData.draftSscsDocument = this.draftSscsDocument;
+            caseData.draftSscsFurtherEvidenceDocument = this.draftSscsFurtherEvidenceDocument;
+            caseData.corDocument = this.corDocument;
+            caseData.draftCorDocument = this.draftCorDocument;
+            caseData.generatedNino = this.generatedNino;
+            caseData.generatedSurname = this.generatedSurname;
+            caseData.generatedEmail = this.generatedEmail;
+            caseData.generatedMobile = this.generatedMobile;
+            caseData.generatedDob = this.generatedDob;
+            caseData.directionResponse = this.directionResponse;
+            caseData.evidencePresent = this.evidencePresent;
+            caseData.bulkScanCaseReference = this.bulkScanCaseReference;
+            caseData.decisionNotes = this.decisionNotes;
+            caseData.isCorDecision = this.isCorDecision;
+            caseData.relistingReason = this.relistingReason;
+            caseData.dateSentToDwp = this.dateSentToDwp;
+            caseData.interlocReviewState = this.interlocReviewState;
+            caseData.hmctsDwpState = this.hmctsDwpState;
+            caseData.dwpFurtherEvidenceStates = this.dwpFurtherEvidenceStates;
+            caseData.originalSender = this.originalSender;
+            caseData.furtherEvidenceAction = this.furtherEvidenceAction;
+            caseData.scannedDocuments = this.scannedDocuments;
+            caseData.outcome = this.outcome;
+            caseData.sscsInterlocDirectionDocument = this.sscsInterlocDirectionDocument;
+            caseData.sscsInterlocDecisionDocument = this.sscsInterlocDecisionDocument;
+            caseData.sscsStrikeOutDocument = this.sscsStrikeOutDocument;
+            caseData.informationFromAppellant = this.informationFromAppellant;
+            caseData.evidenceHandled = this.evidenceHandled;
+            caseData.assignedToJudge = this.assignedToJudge;
+            caseData.assignedToDisabilityMember = this.assignedToDisabilityMember;
+            caseData.assignedToMedicalMember = this.assignedToMedicalMember;
+            caseData.reissueFurtherEvidenceDocument = this.reissueFurtherEvidenceDocument;
+            caseData.resendToAppellant = this.resendToAppellant;
+            caseData.resendToRepresentative = this.resendToRepresentative;
+            caseData.resendToDwp = this.resendToDwp;
+            caseData.caseCode = this.caseCode;
+            caseData.benefitCode = this.benefitCode;
+            caseData.issueCode = this.issueCode;
+            caseData.dwpOriginatingOffice = this.dwpOriginatingOffice;
+            caseData.dwpPresentingOffice = this.dwpPresentingOffice;
+            caseData.dwpIsOfficerAttending = this.dwpIsOfficerAttending;
+            caseData.dwpUcb = this.dwpUcb;
+            caseData.dwpPhme = this.dwpPhme;
+            caseData.dwpComplexAppeal = this.dwpComplexAppeal;
+            caseData.dwpFurtherInfo = this.dwpFurtherInfo;
+            caseData.correspondence = this.correspondence;
+            caseData.interlocReferralDate = this.interlocReferralDate;
+            caseData.interlocReferralReason = this.interlocReferralReason;
+            caseData.dwpRegionalCentre = this.dwpRegionalCentre;
+            caseData.generateNotice = this.generateNotice;
+            caseData.previewDocument = this.previewDocument;
+            caseData.bodyContent = this.bodyContent;
+            caseData.signedBy = this.signedBy;
+            caseData.signedRole = this.signedRole;
+            caseData.dateAdded = this.dateAdded;
+            caseData.historicSscsInterlocDirectionDocs = this.historicSscsInterlocDirectionDocs;
+            caseData.dwpState = this.dwpState;
+            caseData.appealNotePad = this.appealNotePad;
+            caseData.dwpStateFeNoAction = this.dwpStateFeNoAction;
+            caseData.createdInGapsFrom = this.createdInGapsFrom;
+            caseData.dateCaseSentToGaps = this.dateCaseSentToGaps;
+            caseData.associatedCase = this.associatedCase;
+            caseData.dwpAT38Document = this.dwpAT38Document;
+            caseData.dwpEvidenceBundleDocument = this.dwpEvidenceBundleDocument;
+            caseData.dwpResponseDocument = this.dwpResponseDocument;
+            caseData.dwpSupplementaryResponseDoc = this.dwpSupplementaryResponseDoc;
+            caseData.dwpOtherDoc = this.dwpOtherDoc;
+            caseData.dwpLT203 = this.dwpLT203;
+            caseData.dwpLapseLetter = this.dwpLapseLetter;
+            caseData.dwpResponseDate = this.dwpResponseDate;
+            caseData.linkedCasesBoolean = this.linkedCasesBoolean;
+            caseData.decisionType = this.decisionType;
+            caseData.selectWhoReviewsCase = this.selectWhoReviewsCase;
+            caseData.directionType = this.directionType;
+            caseData.directionTypeDl = this.directionTypeDl;
+            caseData.extensionNextEvent = this.extensionNextEvent;
+            caseData.extensionNextEventDl = this.extensionNextEventDl;
+            caseData.tl1Form = this.tl1Form;
+            caseData.isInterlocRequired = this.isInterlocRequired;
+            caseData.panel = this.panel;
+            caseData.evidenceReceived = this.evidenceReceived;
+            caseData.urgentCase = this.urgentCase;
+            caseData.urgentHearingRegistered = this.urgentHearingRegistered;
+            caseData.urgentHearingOutcome = this.urgentHearingOutcome;
+            caseData.documentSentToDwp = this.documentSentToDwp;
+            caseData.directionDueDate = this.directionDueDate;
+            caseData.reservedToJudge = this.reservedToJudge;
+            caseData.linkedCase = this.linkedCase;
+            caseData.isWaiverNeeded = this.isWaiverNeeded;
+            caseData.waiverDeclaration = this.waiverDeclaration;
+            caseData.waiverReason = this.waiverReason;
+            caseData.waiverReasonOther = this.waiverReasonOther;
+            caseData.clerkDelegatedAuthority = this.clerkDelegatedAuthority;
+            caseData.clerkAppealSatisfactionText = this.clerkAppealSatisfactionText;
+            caseData.clerkConfirmationOfMrn = this.clerkConfirmationOfMrn;
+            caseData.clerkOtherReason = this.clerkOtherReason;
+            caseData.clerkConfirmationOther = this.clerkConfirmationOther;
+            caseData.responseRequired = this.responseRequired;
+            caseData.timeExtensionRequested = this.timeExtensionRequested;
+            caseData.bundleConfiguration = this.bundleConfiguration;
+            caseData.pcqId = this.pcqId;
+            caseData.writeFinalDecisionIsDescriptorFlow = this.writeFinalDecisionIsDescriptorFlow;
+            caseData.writeFinalDecisionGenerateNotice = this.writeFinalDecisionGenerateNotice;
+            caseData.writeFinalDecisionAllowedOrRefused = this.writeFinalDecisionAllowedOrRefused;
+            caseData.writeFinalDecisionTypeOfHearing = this.writeFinalDecisionTypeOfHearing;
+            caseData.writeFinalDecisionPresentingOfficerAttendedQuestion = this.writeFinalDecisionPresentingOfficerAttendedQuestion;
+            caseData.writeFinalDecisionAppellantAttendedQuestion = this.writeFinalDecisionAppellantAttendedQuestion;
+            caseData.pipWriteFinalDecisionDailyLivingQuestion = this.pipWriteFinalDecisionDailyLivingQuestion;
+            caseData.pipWriteFinalDecisionComparedToDwpDailyLivingQuestion = this.pipWriteFinalDecisionComparedToDwpDailyLivingQuestion;
+            caseData.pipWriteFinalDecisionMobilityQuestion = this.pipWriteFinalDecisionMobilityQuestion;
+            caseData.pipWriteFinalDecisionComparedToDwpMobilityQuestion = this.pipWriteFinalDecisionComparedToDwpMobilityQuestion;
+            caseData.writeFinalDecisionStartDate = this.writeFinalDecisionStartDate;
+            caseData.writeFinalDecisionEndDateType = this.writeFinalDecisionEndDateType;
+            caseData.writeFinalDecisionEndDate = this.writeFinalDecisionEndDate;
+            caseData.writeFinalDecisionDisabilityQualifiedPanelMemberName = this.writeFinalDecisionDisabilityQualifiedPanelMemberName;
+            caseData.writeFinalDecisionMedicallyQualifiedPanelMemberName = this.writeFinalDecisionMedicallyQualifiedPanelMemberName;
+            caseData.writeFinalDecisionOtherPanelMemberName = this.writeFinalDecisionOtherPanelMemberName;
+            caseData.writeFinalDecisionDateOfDecision = this.writeFinalDecisionDateOfDecision;
+            caseData.writeFinalDecisionDetailsOfDecision = this.writeFinalDecisionDetailsOfDecision;
+            caseData.writeFinalDecisionReasons = this.writeFinalDecisionReasons;
+            caseData.pipWriteFinalDecisionDailyLivingActivitiesQuestion = this.pipWriteFinalDecisionDailyLivingActivitiesQuestion;
+            caseData.pipWriteFinalDecisionMobilityActivitiesQuestion = this.pipWriteFinalDecisionMobilityActivitiesQuestion;
+            caseData.pipWriteFinalDecisionPreparingFoodQuestion = this.pipWriteFinalDecisionPreparingFoodQuestion;
+            caseData.pipWriteFinalDecisionTakingNutritionQuestion = this.pipWriteFinalDecisionTakingNutritionQuestion;
+            caseData.pipWriteFinalDecisionManagingTherapyQuestion = this.pipWriteFinalDecisionManagingTherapyQuestion;
+            caseData.pipWriteFinalDecisionWashAndBatheQuestion = this.pipWriteFinalDecisionWashAndBatheQuestion;
+            caseData.pipWriteFinalDecisionManagingToiletNeedsQuestion = this.pipWriteFinalDecisionManagingToiletNeedsQuestion;
+            caseData.pipWriteFinalDecisionDressingAndUndressingQuestion = this.pipWriteFinalDecisionDressingAndUndressingQuestion;
+            caseData.pipWriteFinalDecisionCommunicatingQuestion = this.pipWriteFinalDecisionCommunicatingQuestion;
+            caseData.pipWriteFinalDecisionReadingUnderstandingQuestion = this.pipWriteFinalDecisionReadingUnderstandingQuestion;
+            caseData.pipWriteFinalDecisionEngagingWithOthersQuestion = this.pipWriteFinalDecisionEngagingWithOthersQuestion;
+            caseData.pipWriteFinalDecisionBudgetingDecisionsQuestion = this.pipWriteFinalDecisionBudgetingDecisionsQuestion;
+            caseData.pipWriteFinalDecisionPlanningAndFollowingQuestion = this.pipWriteFinalDecisionPlanningAndFollowingQuestion;
+            caseData.pipWriteFinalDecisionMovingAroundQuestion = this.pipWriteFinalDecisionMovingAroundQuestion;
+            caseData.writeFinalDecisionPageSectionReference = this.writeFinalDecisionPageSectionReference;
+            caseData.writeFinalDecisionAnythingElse = this.writeFinalDecisionAnythingElse;
+            caseData.writeFinalDecisionPreviewDocument = this.writeFinalDecisionPreviewDocument;
+            caseData.writeFinalDecisionGeneratedDate = this.writeFinalDecisionGeneratedDate;
+            caseData.adjournCaseGenerateNotice = this.adjournCaseGenerateNotice;
+            caseData.adjournCaseTypeOfHearing = this.adjournCaseTypeOfHearing;
+            caseData.adjournCaseCanCaseBeListedRightAway = this.adjournCaseCanCaseBeListedRightAway;
+            caseData.adjournCaseAreDirectionsBeingMadeToParties = this.adjournCaseAreDirectionsBeingMadeToParties;
+            caseData.adjournCaseDirectionsDueDateDaysOffset = this.adjournCaseDirectionsDueDateDaysOffset;
+            caseData.adjournCaseDirectionsDueDate = this.adjournCaseDirectionsDueDate;
+            caseData.adjournCaseTypeOfNextHearing = this.adjournCaseTypeOfNextHearing;
+            caseData.adjournCaseNextHearingVenue = this.adjournCaseNextHearingVenue;
+            caseData.adjournCaseNextHearingVenueSelected = this.adjournCaseNextHearingVenueSelected;
+            caseData.adjournCasePanelMembersExcluded = this.adjournCasePanelMembersExcluded;
+            caseData.adjournCaseDisabilityQualifiedPanelMemberName = this.adjournCaseDisabilityQualifiedPanelMemberName;
+            caseData.adjournCaseMedicallyQualifiedPanelMemberName = this.adjournCaseMedicallyQualifiedPanelMemberName;
+            caseData.adjournCaseOtherPanelMemberName = this.adjournCaseOtherPanelMemberName;
+            caseData.adjournCaseNextHearingListingDurationType = this.adjournCaseNextHearingListingDurationType;
+            caseData.adjournCaseNextHearingListingDuration = this.adjournCaseNextHearingListingDuration;
+            caseData.adjournCaseNextHearingListingDurationUnits = this.adjournCaseNextHearingListingDurationUnits;
+            caseData.adjournCaseInterpreterRequired = this.adjournCaseInterpreterRequired;
+            caseData.adjournCaseInterpreterLanguage = this.adjournCaseInterpreterLanguage;
+            caseData.adjournCaseNextHearingDateType = this.adjournCaseNextHearingDateType;
+            caseData.adjournCaseNextHearingDateOrPeriod = this.adjournCaseNextHearingDateOrPeriod;
+            caseData.adjournCaseNextHearingDateOrTime = this.adjournCaseNextHearingDateOrTime;
+            caseData.adjournCaseNextHearingFirstAvailableDateAfterDate = this.adjournCaseNextHearingFirstAvailableDateAfterDate;
+            caseData.adjournCaseNextHearingFirstAvailableDateAfterPeriod = this.adjournCaseNextHearingFirstAvailableDateAfterPeriod;
+            caseData.adjournCaseTime = this.adjournCaseTime;
+            caseData.adjournCaseReasons = this.adjournCaseReasons;
+            caseData.adjournCaseAdditionalDirections = this.adjournCaseAdditionalDirections;
+            caseData.adjournCasePreviewDocument = this.adjournCasePreviewDocument;
+            caseData.adjournCaseGeneratedDate = this.adjournCaseGeneratedDate;
+            caseData.notListableProvideReasons = this.notListableProvideReasons;
+            caseData.notListableDueDate = this.notListableDueDate;
+            caseData.updateNotListableDirectionsFulfilled = this.updateNotListableDirectionsFulfilled;
+            caseData.updateNotListableInterlocReview = this.updateNotListableInterlocReview;
+            caseData.updateNotListableWhoReviewsCase = this.updateNotListableWhoReviewsCase;
+            caseData.updateNotListableSetNewDueDate = this.updateNotListableSetNewDueDate;
+            caseData.updateNotListableDueDate = this.updateNotListableDueDate;
+            caseData.updateNotListableWhereShouldCaseMoveTo = this.updateNotListableWhereShouldCaseMoveTo;
+            caseData.languagePreferenceWelsh = this.languagePreferenceWelsh;
+            caseData.elementsDisputedList = this.elementsDisputedList;
+            caseData.elementsDisputedGeneral = this.elementsDisputedGeneral;
+            caseData.elementsDisputedSanctions = this.elementsDisputedSanctions;
+            caseData.elementsDisputedOverpayment = this.elementsDisputedOverpayment;
+            caseData.elementsDisputedHousing = this.elementsDisputedHousing;
+            caseData.elementsDisputedChildCare = this.elementsDisputedChildCare;
+            caseData.elementsDisputedCare = this.elementsDisputedCare;
+            caseData.elementsDisputedChildElement = this.elementsDisputedChildElement;
+            caseData.elementsDisputedChildDisabled = this.elementsDisputedChildDisabled;
+            caseData.elementsDisputedIsDecisionDisputedByOthers = this.elementsDisputedIsDecisionDisputedByOthers;
+            caseData.elementsDisputedLinkedAppealRef = this.elementsDisputedLinkedAppealRef;
+            caseData.jointParty = this.jointParty;
+            caseData.jointPartyName = this.jointPartyName;
+            caseData.jointPartyIdentity = this.jointPartyIdentity;
+            caseData.jointPartyAddressSameAsAppellant = this.jointPartyAddressSameAsAppellant;
+            caseData.jointPartyAddress = this.jointPartyAddress;
+            caseData.translationWorkOutstanding = this.translationWorkOutstanding;
+            caseData.sscsWelshDocuments = this.sscsWelshDocuments;
+            caseData.sscsWelshPreviewDocuments = this.sscsWelshPreviewDocuments;
+            caseData.sscsWelshPreviewNextEvent = this.sscsWelshPreviewNextEvent;
+            caseData.originalDocuments = this.originalDocuments;
+            caseData.originalNoticeDocuments = this.originalNoticeDocuments;
+            caseData.documentTypes = this.documentTypes;
+            caseData.welshBodyContent = this.welshBodyContent;
+            caseData.englishBodyContent = this.englishBodyContent;
+            caseData.isScottishCase = this.isScottishCase;
+            caseData.reinstatementRegistered = this.reinstatementRegistered;
+            caseData.reinstatementOutcome = this.reinstatementOutcome;
+            caseData.welshInterlocNextReviewState = this.welshInterlocNextReviewState;
+            caseData.confidentialityRequestOutcomeAppellant = this.confidentialityRequestOutcomeAppellant;
+            caseData.confidentialityRequestOutcomeJointParty = this.confidentialityRequestOutcomeJointParty;
+            caseData.confidentialityRequestAppellantGrantedOrRefused = this.confidentialityRequestAppellantGrantedOrRefused;
+            caseData.confidentialityRequestJointPartyGrantedOrRefused = this.confidentialityRequestJointPartyGrantedOrRefused;
+            caseData.formType = this.formType;
+            caseData.isProgressingViaGaps = this.isProgressingViaGaps;
+            caseData.wcaAppeal = this.wcaAppeal;
+            caseData.supportGroupOnlyAppeal = this.supportGroupOnlyAppeal;
+            caseData.esaWriteFinalDecisionPhysicalDisabilitiesQuestion = this.esaWriteFinalDecisionPhysicalDisabilitiesQuestion;
+            caseData.esaWriteFinalDecisionMentalAssessmentQuestion = this.esaWriteFinalDecisionMentalAssessmentQuestion;
+            caseData.esaWriteFinalDecisionMobilisingUnaidedQuestion = this.esaWriteFinalDecisionMobilisingUnaidedQuestion;
+            caseData.esaWriteFinalDecisionStandingAndSittingQuestion = this.esaWriteFinalDecisionStandingAndSittingQuestion;
+            caseData.esaWriteFinalDecisionReachingQuestion = this.esaWriteFinalDecisionReachingQuestion;
+            caseData.esaWriteFinalDecisionPickingUpQuestion = this.esaWriteFinalDecisionPickingUpQuestion;
+            caseData.esaWriteFinalDecisionManualDexterityQuestion = this.esaWriteFinalDecisionManualDexterityQuestion;
+            caseData.esaWriteFinalDecisionMakingSelfUnderstoodQuestion = this.esaWriteFinalDecisionMakingSelfUnderstoodQuestion;
+            caseData.esaWriteFinalDecisionCommunicationQuestion = this.esaWriteFinalDecisionCommunicationQuestion;
+            caseData.esaWriteFinalDecisionNavigationQuestion = this.esaWriteFinalDecisionNavigationQuestion;
+            caseData.esaWriteFinalDecisionLossOfControlQuestion = this.esaWriteFinalDecisionLossOfControlQuestion;
+            caseData.esaWriteFinalDecisionConsciousnessQuestion = this.esaWriteFinalDecisionConsciousnessQuestion;
+            caseData.esaWriteFinalDecisionLearningTasksQuestion = this.esaWriteFinalDecisionLearningTasksQuestion;
+            caseData.esaWriteFinalDecisionAwarenessOfHazardsQuestion = this.esaWriteFinalDecisionAwarenessOfHazardsQuestion;
+            caseData.esaWriteFinalDecisionPersonalActionQuestion = this.esaWriteFinalDecisionPersonalActionQuestion;
+            caseData.esaWriteFinalDecisionCopingWithChangeQuestion = this.esaWriteFinalDecisionCopingWithChangeQuestion;
+            caseData.esaWriteFinalDecisionGettingAboutQuestion = this.esaWriteFinalDecisionGettingAboutQuestion;
+            caseData.esaWriteFinalDecisionSocialEngagementQuestion = this.esaWriteFinalDecisionSocialEngagementQuestion;
+            caseData.esaWriteFinalDecisionAppropriatenessOfBehaviourQuestion = this.esaWriteFinalDecisionAppropriatenessOfBehaviourQuestion;
+            caseData.doesRegulation29Apply = this.doesRegulation29Apply;
+            caseData.showRegulation29Page = this.showRegulation29Page;
+            caseData.showSchedule3ActivitiesPage = this.showSchedule3ActivitiesPage;
+            caseData.esaWriteFinalDecisionSchedule3ActivitiesApply = this.esaWriteFinalDecisionSchedule3ActivitiesApply;
+            caseData.esaWriteFinalDecisionSchedule3ActivitiesQuestion = this.esaWriteFinalDecisionSchedule3ActivitiesQuestion;
+            caseData.doesRegulation35Apply = this.doesRegulation35Apply;
+            caseData.showFinalDecisionNoticeSummaryOfOutcomePage = this.showFinalDecisionNoticeSummaryOfOutcomePage;
+            caseData.test1 = this.test1;
+            caseData.test2 = this.test2;
+            return caseData;
         }
     }
 
-    public static SscsCaseData.SscsCaseDataBuilder builder() {
-        return new SscsCaseData.SscsCaseDataBuilder();
-    }
-
-    public SscsCaseData.SscsCaseDataBuilder toBuilder() {
-        return (new SscsCaseData.SscsCaseDataBuilder()).ccdCaseId(this.ccdCaseId).state(this.state).previousState(this.previousState).caseReference(this.caseReference).caseCreated(this.caseCreated).infoRequests(this.infoRequests).region(this.region).appeal(this.appeal).hearings(this.hearings).evidence(this.evidence).dwpTimeExtension(this.dwpTimeExtension).events(this.events).subscriptions(this.subscriptions).regionalProcessingCenter(this.regionalProcessingCenter).caseBundles(this.caseBundles).sscsDocument(this.sscsDocument).draftSscsDocument(this.draftSscsDocument).draftSscsFurtherEvidenceDocument(this.draftSscsFurtherEvidenceDocument).corDocument(this.corDocument).draftCorDocument(this.draftCorDocument).sscsInterlocDecisionDocument(this.sscsInterlocDecisionDocument).sscsInterlocDirectionDocument(this.sscsInterlocDirectionDocument).sscsStrikeOutDocument(this.sscsStrikeOutDocument).generatedNino(this.generatedNino).generatedSurname(this.generatedSurname).generatedEmail(this.generatedEmail).generatedMobile(this.generatedMobile).generatedDob(this.generatedDob).directionResponse(this.directionResponse).evidencePresent(this.evidencePresent).bulkScanCaseReference(this.bulkScanCaseReference).decisionNotes(this.decisionNotes).isCorDecision(this.isCorDecision).relistingReason(this.relistingReason).dateSentToDwp(this.dateSentToDwp).interlocReviewState(this.interlocReviewState).hmctsDwpState(this.hmctsDwpState).dwpFurtherEvidenceStates(this.dwpFurtherEvidenceStates).originalSender(this.originalSender).furtherEvidenceAction(this.furtherEvidenceAction).scannedDocuments(this.scannedDocuments).informationFromAppellant(this.informationFromAppellant).outcome(this.outcome).evidenceHandled(this.evidenceHandled).assignedToJudge(this.assignedToJudge).assignedToDisabilityMember(this.assignedToDisabilityMember).assignedToMedicalMember(this.assignedToMedicalMember).reissueFurtherEvidenceDocument(this.reissueFurtherEvidenceDocument).resendToAppellant(this.resendToAppellant).resendToRepresentative(this.resendToRepresentative).resendToDwp(this.resendToDwp).caseCode(this.caseCode).benefitCode(this.benefitCode).issueCode(this.issueCode).dwpOriginatingOffice(this.dwpOriginatingOffice).dwpPresentingOffice(this.dwpPresentingOffice).dwpIsOfficerAttending(this.dwpIsOfficerAttending).dwpUcb(this.dwpUcb).dwpPhme(this.dwpPhme).dwpComplexAppeal(this.dwpComplexAppeal).dwpFurtherInfo(this.dwpFurtherInfo).correspondence(this.correspondence).interlocReferralDate(this.interlocReferralDate).interlocReferralReason(this.interlocReferralReason).dwpRegionalCentre(this.dwpRegionalCentre).generateNotice(this.generateNotice).previewDocument(this.previewDocument).bodyContent(this.bodyContent).signedBy(this.signedBy).signedRole(this.signedRole).dateAdded(this.dateAdded).historicSscsInterlocDirectionDocs(this.historicSscsInterlocDirectionDocs).dwpState(this.dwpState).appealNotePad(this.appealNotePad).dwpStateFeNoAction(this.dwpStateFeNoAction).createdInGapsFrom(this.createdInGapsFrom).dateCaseSentToGaps(this.dateCaseSentToGaps).associatedCase(this.associatedCase).dwpAT38Document(this.dwpAT38Document).dwpEvidenceBundleDocument(this.dwpEvidenceBundleDocument).dwpResponseDocument(this.dwpResponseDocument).dwpSupplementaryResponseDoc(this.dwpSupplementaryResponseDoc).dwpOtherDoc(this.dwpOtherDoc).dwpLT203(this.dwpLT203).dwpLapseLetter(this.dwpLapseLetter).dwpResponseDate(this.dwpResponseDate).linkedCasesBoolean(this.linkedCasesBoolean).decisionType(this.decisionType).selectWhoReviewsCase(this.selectWhoReviewsCase).directionType(this.directionType).directionTypeDl(this.directionTypeDl).extensionNextEvent(this.extensionNextEvent).extensionNextEventDl(this.extensionNextEventDl).tl1Form(this.tl1Form).isInterlocRequired(this.isInterlocRequired).panel(this.panel).evidenceReceived(this.evidenceReceived).urgentCase(this.urgentCase).urgentHearingRegistered(this.urgentHearingRegistered).urgentHearingOutcome(this.urgentHearingOutcome).documentSentToDwp(this.documentSentToDwp).directionDueDate(this.directionDueDate).reservedToJudge(this.reservedToJudge).linkedCase(this.linkedCase).isWaiverNeeded(this.isWaiverNeeded).waiverDeclaration(this.waiverDeclaration).waiverReason(this.waiverReason).waiverReasonOther(this.waiverReasonOther).clerkDelegatedAuthority(this.clerkDelegatedAuthority).clerkAppealSatisfactionText(this.clerkAppealSatisfactionText).pipWriteFinalDecisionDailyLivingActivitiesQuestion(this.pipWriteFinalDecisionDailyLivingActivitiesQuestion).pipWriteFinalDecisionMobilityActivitiesQuestion(this.pipWriteFinalDecisionMobilityActivitiesQuestion).clerkConfirmationOfMrn(this.clerkConfirmationOfMrn).clerkOtherReason(this.clerkOtherReason).clerkConfirmationOther(this.clerkConfirmationOther).responseRequired(this.responseRequired).timeExtensionRequested(this.timeExtensionRequested).bundleConfiguration(this.bundleConfiguration).pcqId(this.pcqId).writeFinalDecisionIsDescriptorFlow(this.writeFinalDecisionIsDescriptorFlow).writeFinalDecisionGenerateNotice(this.writeFinalDecisionGenerateNotice).writeFinalDecisionAllowedOrRefused(this.writeFinalDecisionAllowedOrRefused).writeFinalDecisionTypeOfHearing(this.writeFinalDecisionTypeOfHearing).writeFinalDecisionPresentingOfficerAttendedQuestion(this.writeFinalDecisionPresentingOfficerAttendedQuestion).writeFinalDecisionAppellantAttendedQuestion(this.writeFinalDecisionAppellantAttendedQuestion).pipWriteFinalDecisionDailyLivingQuestion(this.pipWriteFinalDecisionDailyLivingQuestion).pipWriteFinalDecisionComparedToDwpDailyLivingQuestion(this.pipWriteFinalDecisionComparedToDwpDailyLivingQuestion).pipWriteFinalDecisionMobilityQuestion(this.pipWriteFinalDecisionMobilityQuestion).pipWriteFinalDecisionComparedToDwpMobilityQuestion(this.pipWriteFinalDecisionComparedToDwpMobilityQuestion).writeFinalDecisionStartDate(this.writeFinalDecisionStartDate).writeFinalDecisionEndDateType(this.writeFinalDecisionEndDateType).writeFinalDecisionEndDate(this.writeFinalDecisionEndDate).writeFinalDecisionDisabilityQualifiedPanelMemberName(this.writeFinalDecisionDisabilityQualifiedPanelMemberName).writeFinalDecisionMedicallyQualifiedPanelMemberName(this.writeFinalDecisionMedicallyQualifiedPanelMemberName).writeFinalDecisionOtherPanelMemberName(this.writeFinalDecisionOtherPanelMemberName).writeFinalDecisionDateOfDecision(this.writeFinalDecisionDateOfDecision).writeFinalDecisionDetailsOfDecision(this.writeFinalDecisionDetailsOfDecision).writeFinalDecisionReasons(this.writeFinalDecisionReasons).pipWriteFinalDecisionPreparingFoodQuestion(this.pipWriteFinalDecisionPreparingFoodQuestion).pipWriteFinalDecisionTakingNutritionQuestion(this.pipWriteFinalDecisionTakingNutritionQuestion).pipWriteFinalDecisionManagingTherapyQuestion(this.pipWriteFinalDecisionManagingTherapyQuestion).pipWriteFinalDecisionWashAndBatheQuestion(this.pipWriteFinalDecisionWashAndBatheQuestion).pipWriteFinalDecisionManagingToiletNeedsQuestion(this.pipWriteFinalDecisionManagingToiletNeedsQuestion).pipWriteFinalDecisionDressingAndUndressingQuestion(this.pipWriteFinalDecisionDressingAndUndressingQuestion).pipWriteFinalDecisionCommunicatingQuestion(this.pipWriteFinalDecisionCommunicatingQuestion).pipWriteFinalDecisionReadingUnderstandingQuestion(this.pipWriteFinalDecisionReadingUnderstandingQuestion).pipWriteFinalDecisionEngagingWithOthersQuestion(this.pipWriteFinalDecisionEngagingWithOthersQuestion).pipWriteFinalDecisionBudgetingDecisionsQuestion(this.pipWriteFinalDecisionBudgetingDecisionsQuestion).pipWriteFinalDecisionPlanningAndFollowingQuestion(this.pipWriteFinalDecisionPlanningAndFollowingQuestion).pipWriteFinalDecisionMovingAroundQuestion(this.pipWriteFinalDecisionMovingAroundQuestion).writeFinalDecisionPageSectionReference(this.writeFinalDecisionPageSectionReference).writeFinalDecisionAnythingElse(this.writeFinalDecisionAnythingElse).writeFinalDecisionPreviewDocument(this.writeFinalDecisionPreviewDocument).writeFinalDecisionGeneratedDate(this.writeFinalDecisionGeneratedDate).adjournCaseGenerateNotice(this.adjournCaseGenerateNotice).adjournCaseTypeOfHearing(this.adjournCaseTypeOfHearing).adjournCaseCanCaseBeListedRightAway(this.adjournCaseCanCaseBeListedRightAway).adjournCaseAreDirectionsBeingMadeToParties(this.adjournCaseAreDirectionsBeingMadeToParties).adjournCaseDirectionsDueDateDaysOffset(this.adjournCaseDirectionsDueDateDaysOffset).adjournCaseDirectionsDueDate(this.adjournCaseDirectionsDueDate).adjournCaseTypeOfNextHearing(this.adjournCaseTypeOfNextHearing).adjournCaseNextHearingVenue(this.adjournCaseNextHearingVenue).adjournCaseNextHearingVenueSelected(this.adjournCaseNextHearingVenueSelected).adjournCasePanelMembersExcluded(this.adjournCasePanelMembersExcluded).adjournCaseDisabilityQualifiedPanelMemberName(this.adjournCaseDisabilityQualifiedPanelMemberName).adjournCaseMedicallyQualifiedPanelMemberName(this.adjournCaseMedicallyQualifiedPanelMemberName).adjournCaseOtherPanelMemberName(this.adjournCaseOtherPanelMemberName).adjournCaseNextHearingListingDurationType(this.adjournCaseNextHearingListingDurationType).adjournCaseNextHearingListingDuration(this.adjournCaseNextHearingListingDuration).adjournCaseNextHearingListingDurationUnits(this.adjournCaseNextHearingListingDurationUnits).adjournCaseInterpreterRequired(this.adjournCaseInterpreterRequired).adjournCaseInterpreterLanguage(this.adjournCaseInterpreterLanguage).adjournCaseNextHearingDateType(this.adjournCaseNextHearingDateType).adjournCaseNextHearingDateOrPeriod(this.adjournCaseNextHearingDateOrPeriod).adjournCaseNextHearingDateOrTime(this.adjournCaseNextHearingDateOrTime).adjournCaseNextHearingFirstAvailableDateAfterDate(this.adjournCaseNextHearingFirstAvailableDateAfterDate).adjournCaseNextHearingFirstAvailableDateAfterPeriod(this.adjournCaseNextHearingFirstAvailableDateAfterPeriod).adjournCaseTime(this.adjournCaseTime).adjournCaseReasons(this.adjournCaseReasons).adjournCaseAdditionalDirections(this.adjournCaseAdditionalDirections).adjournCasePreviewDocument(this.adjournCasePreviewDocument).adjournCaseGeneratedDate(this.adjournCaseGeneratedDate).notListableProvideReasons(this.notListableProvideReasons).notListableDueDate(this.notListableDueDate).updateNotListableDirectionsFulfilled(this.updateNotListableDirectionsFulfilled).updateNotListableInterlocReview(this.updateNotListableInterlocReview).updateNotListableWhoReviewsCase(this.updateNotListableWhoReviewsCase).updateNotListableSetNewDueDate(this.updateNotListableSetNewDueDate).updateNotListableDueDate(this.updateNotListableDueDate).updateNotListableWhereShouldCaseMoveTo(this.updateNotListableWhereShouldCaseMoveTo).languagePreferenceWelsh(this.languagePreferenceWelsh).elementsDisputedList(this.elementsDisputedList).elementsDisputedGeneral(this.elementsDisputedGeneral).elementsDisputedSanctions(this.elementsDisputedSanctions).elementsDisputedOverpayment(this.elementsDisputedOverpayment).elementsDisputedHousing(this.elementsDisputedHousing).elementsDisputedChildCare(this.elementsDisputedChildCare).elementsDisputedCare(this.elementsDisputedCare).elementsDisputedChildElement(this.elementsDisputedChildElement).elementsDisputedChildDisabled(this.elementsDisputedChildDisabled).elementsDisputedIsDecisionDisputedByOthers(this.elementsDisputedIsDecisionDisputedByOthers).elementsDisputedLinkedAppealRef(this.elementsDisputedLinkedAppealRef).jointParty(this.jointParty).jointPartyName(this.jointPartyName).jointPartyIdentity(this.jointPartyIdentity).jointPartyAddressSameAsAppellant(this.jointPartyAddressSameAsAppellant).jointPartyAddress(this.jointPartyAddress).translationWorkOutstanding(this.translationWorkOutstanding).sscsWelshDocuments(this.sscsWelshDocuments).sscsWelshPreviewDocuments(this.sscsWelshPreviewDocuments).sscsWelshPreviewNextEvent(this.sscsWelshPreviewNextEvent).originalDocuments(this.originalDocuments).originalNoticeDocuments(this.originalNoticeDocuments).documentTypes(this.documentTypes).welshBodyContent(this.welshBodyContent).englishBodyContent(this.englishBodyContent).isScottishCase(this.isScottishCase).reinstatementRegistered(this.reinstatementRegistered).reinstatementOutcome(this.reinstatementOutcome).welshInterlocNextReviewState(this.welshInterlocNextReviewState).confidentialityRequestOutcomeAppellant(this.confidentialityRequestOutcomeAppellant).confidentialityRequestOutcomeJointParty(this.confidentialityRequestOutcomeJointParty).confidentialityRequestAppellantGrantedOrRefused(this.confidentialityRequestAppellantGrantedOrRefused).confidentialityRequestJointPartyGrantedOrRefused(this.confidentialityRequestJointPartyGrantedOrRefused).formType(this.formType).isProgressingViaGaps(this.isProgressingViaGaps).wcaAppeal(this.wcaAppeal).supportGroupOnlyAppeal(this.supportGroupOnlyAppeal).esaWriteFinalDecisionPhysicalDisabilitiesQuestion(this.esaWriteFinalDecisionPhysicalDisabilitiesQuestion).esaWriteFinalDecisionMentalAssessmentQuestion(this.esaWriteFinalDecisionMentalAssessmentQuestion).esaWriteFinalDecisionMobilisingUnaidedQuestion(this.esaWriteFinalDecisionMobilisingUnaidedQuestion).esaWriteFinalDecisionStandingAndSittingQuestion(this.esaWriteFinalDecisionStandingAndSittingQuestion).esaWriteFinalDecisionReachingQuestion(this.esaWriteFinalDecisionReachingQuestion).esaWriteFinalDecisionPickingUpQuestion(this.esaWriteFinalDecisionPickingUpQuestion).esaWriteFinalDecisionManualDexterityQuestion(this.esaWriteFinalDecisionManualDexterityQuestion).esaWriteFinalDecisionMakingSelfUnderstoodQuestion(this.esaWriteFinalDecisionMakingSelfUnderstoodQuestion).esaWriteFinalDecisionCommunicationQuestion(this.esaWriteFinalDecisionCommunicationQuestion).esaWriteFinalDecisionNavigationQuestion(this.esaWriteFinalDecisionNavigationQuestion).esaWriteFinalDecisionLossOfControlQuestion(this.esaWriteFinalDecisionLossOfControlQuestion).esaWriteFinalDecisionConsciousnessQuestion(this.esaWriteFinalDecisionConsciousnessQuestion).esaWriteFinalDecisionLearningTasksQuestion(this.esaWriteFinalDecisionLearningTasksQuestion).esaWriteFinalDecisionAwarenessOfHazardsQuestion(this.esaWriteFinalDecisionAwarenessOfHazardsQuestion).esaWriteFinalDecisionPersonalActionQuestion(this.esaWriteFinalDecisionPersonalActionQuestion).esaWriteFinalDecisionCopingWithChangeQuestion(this.esaWriteFinalDecisionCopingWithChangeQuestion).esaWriteFinalDecisionGettingAboutQuestion(this.esaWriteFinalDecisionGettingAboutQuestion).esaWriteFinalDecisionSocialEngagementQuestion(this.esaWriteFinalDecisionSocialEngagementQuestion).esaWriteFinalDecisionAppropriatenessOfBehaviourQuestion(this.esaWriteFinalDecisionAppropriatenessOfBehaviourQuestion).doesRegulation29Apply(this.doesRegulation29Apply).showRegulation29Page(this.showRegulation29Page).showSchedule3ActivitiesPage(this.showSchedule3ActivitiesPage).esaWriteFinalDecisionSchedule3ActivitiesApply(this.esaWriteFinalDecisionSchedule3ActivitiesApply).esaWriteFinalDecisionSchedule3ActivitiesQuestion(this.esaWriteFinalDecisionSchedule3ActivitiesQuestion).doesRegulation35Apply(this.doesRegulation35Apply).showFinalDecisionNoticeSummaryOfOutcomePage(this.showFinalDecisionNoticeSummaryOfOutcomePage).test1(this.test1).test2(this.test2);
-    }
 
 }
+
