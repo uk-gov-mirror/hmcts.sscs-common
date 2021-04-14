@@ -170,7 +170,7 @@ public class AirLookupService {
         AirlookupBenefitToVenue venue = lookupAirVenueNameByPostCode(getFirstHalfOfPostcode(postcode));
         Benefit benefit = Benefit.findBenefitByShortName(benefitType.getCode());
 
-        if (benefit != null && "pip".equalsIgnoreCase(BENEFIT_CODE_VENUE.get(benefit))) {
+        if (benefit != null && ("pip".equalsIgnoreCase(BENEFIT_CODE_VENUE.get(benefit)) || "dla".equalsIgnoreCase(BENEFIT_CODE_VENUE.get(benefit)))) {
             return venue.getPipVenue();
         }
         return venue.getEsaOrUcVenue();

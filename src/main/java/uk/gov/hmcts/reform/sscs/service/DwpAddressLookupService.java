@@ -126,7 +126,7 @@ public class DwpAddressLookupService {
         }  else if (UC == benefit) {
             return Optional.of(dwpMappings.getUc());
         } else if (DLA == benefit) {
-            officeMapping = getOfficeMappingByDwpIssuingOffice(dwpIssuingOffice, dwpMappings.getDla());
+            officeMapping = getOfficeMappingByDwpIssuingOfficeDla(dwpIssuingOffice, dwpMappings.getDla());
         } else if (CARERS_ALLOWANCE == benefit) {
             return Optional.of(dwpMappings.getCarersAllowance());
         }
