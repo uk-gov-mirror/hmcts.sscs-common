@@ -1,22 +1,28 @@
 package uk.gov.hmcts.reform.sscs.ccd.service;
 
-import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
 import static org.mockito.MockitoAnnotations.openMocks;
+import static uk.gov.hmcts.reform.sscs.utility.StringUtils.getMaskedNino;
 
+import ch.qos.logback.classic.Level;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 import org.mockito.Mock;
 import uk.gov.hmcts.reform.ccd.client.model.CaseDetails;
 import uk.gov.hmcts.reform.ccd.client.model.StartEventResponse;
 import uk.gov.hmcts.reform.sscs.ccd.client.CcdClient;
 import uk.gov.hmcts.reform.sscs.ccd.domain.SscsCaseData;
 import uk.gov.hmcts.reform.sscs.ccd.domain.SscsCaseDetails;
+import uk.gov.hmcts.reform.sscs.ccd.exception.CreateCcdCaseException;
 import uk.gov.hmcts.reform.sscs.ccd.util.CaseDataUtils;
 import uk.gov.hmcts.reform.sscs.idam.IdamService;
 import uk.gov.hmcts.reform.sscs.idam.IdamTokens;
+import uk.gov.hmcts.reform.sscs.utility.LogCaptureExtension;
 
 public class CreateCcdCaseServiceTest {
 
@@ -33,6 +39,10 @@ public class CreateCcdCaseServiceTest {
 
     @Mock
     private SearchCcdCaseService searchCcdCaseService;
+
+    @RegisterExtension
+    private final LogCaptureExtension logCapture =
+            new LogCaptureExtension(CreateCcdCaseService.class);
 
     private CreateCcdCaseService createCcdCaseService;
 
@@ -61,7 +71,18 @@ public class CreateCcdCaseServiceTest {
 
         SscsCaseDetails sscsCaseDetails = createCcdCaseService.createCase(sscsCaseData, "appealCreated", "Summary", "Description", idamTokens);
 
-        assertNotNull(sscsCaseDetails);
+        assertThat(sscsCaseDetails).isNotNull();
+        logCapture
+                .assertLogContains("Creating CCD case for Nino " + getMaskedNino("AB 22 55 66 B"), Level.INFO)
+                .assertLogContains("Case created with case id 1 for nino " + getMaskedNino("AB 22 55 66 B"), Level.INFO);
     }
 
+    @Test
+    void shouldThrowExceptionAndLogMaskedNinoWhenCaseCreationFails() {
+        when(ccdClient.startCaseForCaseworker(idamTokens, "appealCreated")).thenThrow(new RuntimeException("CCD service is down"));
+        CreateCcdCaseException exception = assertThrows(CreateCcdCaseException.class, () -> createCcdCaseService.createCase(sscsCaseData, "appealCreated", "Summary", "Description", idamTokens));
+        assertThat(exception).hasMessage("Error found in the case creation or callback process for the ccd case with SC" +
+                " (SC068/17/00013) and ccdID (null) and Nino (" + getMaskedNino("AB 22 55 66 B") + ") and " +
+                "Benefit Type (PIP) and exception: (CCD service is down) ");
+    }
 }
