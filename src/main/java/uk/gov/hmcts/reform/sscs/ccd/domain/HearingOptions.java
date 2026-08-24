@@ -78,4 +78,19 @@ public class HearingOptions {
     public Boolean wantsAccessibleHearingRoom() {
         return arrangements != null && arrangements.contains("disabledAccess");
     }
+
+    @JsonIgnore
+    public Boolean wantsSupport() {
+        return StringUtils.isNotBlank(wantsSupport) && wantsSupport.equalsIgnoreCase("yes");
+    }
+
+    @JsonIgnore
+    public Boolean wantsInterpreter() {
+        return StringUtils.isNotBlank(languageInterpreter) && languageInterpreter.equalsIgnoreCase("yes");
+    }
+
+    @JsonIgnore
+    public Boolean wantsToAttendWithInterpreterSupport() {
+        return isWantsToAttendHearing() && wantsSupport() && wantsInterpreter();
+    }
 }
