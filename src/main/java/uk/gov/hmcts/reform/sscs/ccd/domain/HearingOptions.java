@@ -81,17 +81,17 @@ public class HearingOptions {
     }
 
     @JsonIgnore
-    public Boolean wantsSupport() {
+    public boolean wantsSupport() {
         return Strings.CI.equals(wantsSupport, "yes");
     }
 
     @JsonIgnore
-    public Boolean wantsInterpreter() {
+    public boolean wantsInterpreter() {
         return Strings.CI.equals(languageInterpreter, "yes");
     }
 
     @JsonIgnore
-    public Boolean wantsToAttendWithInterpreterSupport() {
+    public boolean wantsToAttendWithInterpreterSupport() {
         return isWantsToAttendHearing() && wantsSupport() && wantsInterpreter();
     }
 }
