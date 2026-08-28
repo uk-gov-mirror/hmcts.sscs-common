@@ -7,7 +7,6 @@ import static java.util.Objects.nonNull;
 import static java.util.Objects.requireNonNullElse;
 import static java.util.Optional.ofNullable;
 import static java.util.stream.Collectors.toList;
-
 import static org.apache.commons.collections4.CollectionUtils.isEmpty;
 import static org.apache.commons.collections4.ListUtils.emptyIfNull;
 import static org.apache.commons.lang3.ObjectUtils.isNotEmpty;
@@ -16,7 +15,7 @@ import static uk.gov.hmcts.reform.sscs.ccd.domain.Benefit.UC;
 import static uk.gov.hmcts.reform.sscs.ccd.domain.Benefit.findBenefitByShortName;
 import static uk.gov.hmcts.reform.sscs.ccd.domain.ConfidentialityTabBuilder.buildConfidentialityTab;
 import static uk.gov.hmcts.reform.sscs.ccd.domain.DwpState.FINAL_DECISION_ISSUED;
-
+import static uk.gov.hmcts.reform.sscs.ccd.domain.SscsDocument.BY_DOCUMENT_DATE_ADDED_DESCENDING;
 import static uk.gov.hmcts.reform.sscs.ccd.domain.YesNo.NO;
 import static uk.gov.hmcts.reform.sscs.ccd.domain.YesNo.YES;
 import static uk.gov.hmcts.reform.sscs.ccd.domain.YesNo.isYes;
@@ -41,8 +40,6 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
-import org.springframework.util.CollectionUtils;
-import uk.gov.hmcts.reform.sscs.ccd.predicates.BenefitTypeConfidentialityPredicate;
 import java.util.stream.Stream;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -952,6 +949,16 @@ public class SscsCaseData implements CaseData {
             || appellantConfidentialitySelection == YesNoUndetermined.UNDETERMINED;
 
         return (appellantHasUndeterminedConfidentiality || anyPartyHasUndeterminedConfidentiality) ? YES : NO;
+    }
+
+    public void setSscsDocument(List<SscsDocument> sscsDocument) {
+        if (isNotEmpty(sscsDocument)) {
+            final List<SscsDocument> sortedSscsDocument = new ArrayList<>(sscsDocument);
+            sortedSscsDocument.sort(BY_DOCUMENT_DATE_ADDED_DESCENDING);
+            this.sscsDocument = sortedSscsDocument;
+            return;
+        }
+        this.sscsDocument = sscsDocument;
     }
 
 }
